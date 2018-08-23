@@ -1,0 +1,1524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://PublicService/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://PublicService/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://PublicService/">
+      <s:element name="CNR_GetVehicles">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="r" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="v" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="d" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="nb" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tp" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CNR_GetVehiclesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CNR_GetVehiclesResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CNR_GetVehicleNumbers">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="nr_lini" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="przewoznicy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="nr_zaj" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="kursow" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="czynnosci" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="id_prz" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="stan" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="odch" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="nb" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="typy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="war_trasy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="id_kursu" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="typy_awarii" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CNR_GetVehicleNumbersResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CNR_GetVehicleNumbersResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CNR_GetVehicleTypes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CNR_GetVehicleTypesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CNR_GetVehicleTypesResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CNR_RouteVariants">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="actual" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="vt" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="n" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CNR_RouteVariantsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CNR_RouteVariantsResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CNR_GetVehicleDepartures">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="nb_wozu" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="id_kursu" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="nr_lini" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="war_trasy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="id_przyst" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CNR_GetVehicleDeparturesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CNR_GetVehicleDeparturesResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTimeline">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="krs" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="idp" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTimelineResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTimelineResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CNR_GetRealDepartures">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tp" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CNR_GetRealDeparturesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CNR_GetRealDeparturesResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPlanedDeparutres">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tpd" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="nrl" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="god" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="gdo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tpp" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="kierunek" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPlanedDeparutresResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPlanedDeparutresResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPlanedDeparutresFullInfo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="krs" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPlanedDeparutresFullInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPlanedDeparutresFullInfoResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetNote">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetNoteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetNoteResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStopsOnStreet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_ul" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStopsOnStreetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetStopsOnStreetResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStopsByNumber">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="nr" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStopsByNumberResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetStopsByNumberResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStopsByName">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="q" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="limit" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="transp" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStopsByNameResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetStopsByNameResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStopsDropDown">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="q" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="limit" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStopsDropDownResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetStopsDropDownResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGoogleStops">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGoogleStopsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetGoogleStopsResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DajGrafyGoogle">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="numer_lini" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="war_trasy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cdata" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="id_kursu" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DajGrafyGoogleResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DajGrafyGoogleResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DajGrafyGoogleKlient">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="numer_lini" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="war_trasy" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cdata" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="id_kursu" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DajGrafyGoogleKlientResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DajGrafyGoogleKlientResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDayTypes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDayTypesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDayTypesResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DajCentrumMapy">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DajCentrumMapyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DajCentrumMapyResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRoutes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="id_wersja" nillable="true" type="s:decimal" />
+            <s:element minOccurs="0" maxOccurs="1" name="tp" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRoutesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRoutesResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStreets">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="n" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetStreetsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetStreetsResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchConnection">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="px1" type="s:double" />
+            <s:element minOccurs="1" maxOccurs="1" name="py1" type="s:double" />
+            <s:element minOccurs="1" maxOccurs="1" name="px2" type="s:double" />
+            <s:element minOccurs="1" maxOccurs="1" name="py2" type="s:double" />
+            <s:element minOccurs="0" maxOccurs="1" name="rozp" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="data" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ile_przes" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="tryb" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="lang" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="kod_bledu" type="s:unsignedShort" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchConnectionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SearchConnectionResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+            <s:element minOccurs="1" maxOccurs="1" name="kod_bledu" type="s:unsignedShort" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTicketTerminals">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetTicketTerminalsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTicketTerminalsResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="CNR_GetVehiclesSoapIn">
+    <wsdl:part name="parameters" element="tns:CNR_GetVehicles" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehiclesSoapOut">
+    <wsdl:part name="parameters" element="tns:CNR_GetVehiclesResponse" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleNumbersSoapIn">
+    <wsdl:part name="parameters" element="tns:CNR_GetVehicleNumbers" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleNumbersSoapOut">
+    <wsdl:part name="parameters" element="tns:CNR_GetVehicleNumbersResponse" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleTypesSoapIn">
+    <wsdl:part name="parameters" element="tns:CNR_GetVehicleTypes" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleTypesSoapOut">
+    <wsdl:part name="parameters" element="tns:CNR_GetVehicleTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="CNR_RouteVariantsSoapIn">
+    <wsdl:part name="parameters" element="tns:CNR_RouteVariants" />
+  </wsdl:message>
+  <wsdl:message name="CNR_RouteVariantsSoapOut">
+    <wsdl:part name="parameters" element="tns:CNR_RouteVariantsResponse" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleDeparturesSoapIn">
+    <wsdl:part name="parameters" element="tns:CNR_GetVehicleDepartures" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleDeparturesSoapOut">
+    <wsdl:part name="parameters" element="tns:CNR_GetVehicleDeparturesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTimelineSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTimeline" />
+  </wsdl:message>
+  <wsdl:message name="GetTimelineSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTimelineResponse" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetRealDeparturesSoapIn">
+    <wsdl:part name="parameters" element="tns:CNR_GetRealDepartures" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetRealDeparturesSoapOut">
+    <wsdl:part name="parameters" element="tns:CNR_GetRealDeparturesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPlanedDeparutresSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPlanedDeparutres" />
+  </wsdl:message>
+  <wsdl:message name="GetPlanedDeparutresSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPlanedDeparutresResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPlanedDeparutresFullInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPlanedDeparutresFullInfo" />
+  </wsdl:message>
+  <wsdl:message name="GetPlanedDeparutresFullInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPlanedDeparutresFullInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetNoteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetNote" />
+  </wsdl:message>
+  <wsdl:message name="GetNoteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetNoteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsOnStreetSoapIn">
+    <wsdl:part name="parameters" element="tns:GetStopsOnStreet" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsOnStreetSoapOut">
+    <wsdl:part name="parameters" element="tns:GetStopsOnStreetResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsByNumberSoapIn">
+    <wsdl:part name="parameters" element="tns:GetStopsByNumber" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsByNumberSoapOut">
+    <wsdl:part name="parameters" element="tns:GetStopsByNumberResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsByNameSoapIn">
+    <wsdl:part name="parameters" element="tns:GetStopsByName" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsByNameSoapOut">
+    <wsdl:part name="parameters" element="tns:GetStopsByNameResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsDropDownSoapIn">
+    <wsdl:part name="parameters" element="tns:GetStopsDropDown" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsDropDownSoapOut">
+    <wsdl:part name="parameters" element="tns:GetStopsDropDownResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleStopsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetGoogleStops" />
+  </wsdl:message>
+  <wsdl:message name="GetGoogleStopsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetGoogleStopsResponse" />
+  </wsdl:message>
+  <wsdl:message name="DajGrafyGoogleSoapIn">
+    <wsdl:part name="parameters" element="tns:DajGrafyGoogle" />
+  </wsdl:message>
+  <wsdl:message name="DajGrafyGoogleSoapOut">
+    <wsdl:part name="parameters" element="tns:DajGrafyGoogleResponse" />
+  </wsdl:message>
+  <wsdl:message name="DajGrafyGoogleKlientSoapIn">
+    <wsdl:part name="parameters" element="tns:DajGrafyGoogleKlient" />
+  </wsdl:message>
+  <wsdl:message name="DajGrafyGoogleKlientSoapOut">
+    <wsdl:part name="parameters" element="tns:DajGrafyGoogleKlientResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDayTypesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDayTypes" />
+  </wsdl:message>
+  <wsdl:message name="GetDayTypesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDayTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="DajCentrumMapySoapIn">
+    <wsdl:part name="parameters" element="tns:DajCentrumMapy" />
+  </wsdl:message>
+  <wsdl:message name="DajCentrumMapySoapOut">
+    <wsdl:part name="parameters" element="tns:DajCentrumMapyResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetRoutesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetRoutes" />
+  </wsdl:message>
+  <wsdl:message name="GetRoutesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetRoutesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetStreetsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetStreets" />
+  </wsdl:message>
+  <wsdl:message name="GetStreetsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetStreetsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SearchConnectionSoapIn">
+    <wsdl:part name="parameters" element="tns:SearchConnection" />
+  </wsdl:message>
+  <wsdl:message name="SearchConnectionSoapOut">
+    <wsdl:part name="parameters" element="tns:SearchConnectionResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTicketTerminalsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTicketTerminals" />
+  </wsdl:message>
+  <wsdl:message name="GetTicketTerminalsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTicketTerminalsResponse" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehiclesHttpGetIn">
+    <wsdl:part name="s" type="s:string" />
+    <wsdl:part name="r" type="s:string" />
+    <wsdl:part name="v" type="s:string" />
+    <wsdl:part name="d" type="s:string" />
+    <wsdl:part name="nb" type="s:string" />
+    <wsdl:part name="tp" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehiclesHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleNumbersHttpGetIn">
+    <wsdl:part name="s" type="s:string" />
+    <wsdl:part name="nr_lini" type="s:string" />
+    <wsdl:part name="przewoznicy" type="s:string" />
+    <wsdl:part name="nr_zaj" type="s:string" />
+    <wsdl:part name="kursow" type="s:string" />
+    <wsdl:part name="czynnosci" type="s:string" />
+    <wsdl:part name="id_prz" type="s:string" />
+    <wsdl:part name="stan" type="s:string" />
+    <wsdl:part name="odch" type="s:string" />
+    <wsdl:part name="nb" type="s:string" />
+    <wsdl:part name="typy" type="s:string" />
+    <wsdl:part name="war_trasy" type="s:string" />
+    <wsdl:part name="id_kursu" type="s:string" />
+    <wsdl:part name="typy_awarii" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleNumbersHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleTypesHttpGetIn">
+    <wsdl:part name="s" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleTypesHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsDropDownHttpGetIn">
+    <wsdl:part name="s" type="s:string" />
+    <wsdl:part name="q" type="s:string" />
+    <wsdl:part name="limit" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsDropDownHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="DajCentrumMapyHttpGetIn">
+    <wsdl:part name="s" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="DajCentrumMapyHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetStreetsHttpGetIn">
+    <wsdl:part name="s" type="s:string" />
+    <wsdl:part name="n" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetStreetsHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetTicketTerminalsHttpGetIn" />
+  <wsdl:message name="GetTicketTerminalsHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehiclesHttpPostIn">
+    <wsdl:part name="s" type="s:string" />
+    <wsdl:part name="r" type="s:string" />
+    <wsdl:part name="v" type="s:string" />
+    <wsdl:part name="d" type="s:string" />
+    <wsdl:part name="nb" type="s:string" />
+    <wsdl:part name="tp" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehiclesHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleNumbersHttpPostIn">
+    <wsdl:part name="s" type="s:string" />
+    <wsdl:part name="nr_lini" type="s:string" />
+    <wsdl:part name="przewoznicy" type="s:string" />
+    <wsdl:part name="nr_zaj" type="s:string" />
+    <wsdl:part name="kursow" type="s:string" />
+    <wsdl:part name="czynnosci" type="s:string" />
+    <wsdl:part name="id_prz" type="s:string" />
+    <wsdl:part name="stan" type="s:string" />
+    <wsdl:part name="odch" type="s:string" />
+    <wsdl:part name="nb" type="s:string" />
+    <wsdl:part name="typy" type="s:string" />
+    <wsdl:part name="war_trasy" type="s:string" />
+    <wsdl:part name="id_kursu" type="s:string" />
+    <wsdl:part name="typy_awarii" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleNumbersHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleTypesHttpPostIn">
+    <wsdl:part name="s" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CNR_GetVehicleTypesHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsDropDownHttpPostIn">
+    <wsdl:part name="s" type="s:string" />
+    <wsdl:part name="q" type="s:string" />
+    <wsdl:part name="limit" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetStopsDropDownHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="DajCentrumMapyHttpPostIn">
+    <wsdl:part name="s" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="DajCentrumMapyHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetStreetsHttpPostIn">
+    <wsdl:part name="s" type="s:string" />
+    <wsdl:part name="n" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetStreetsHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetTicketTerminalsHttpPostIn" />
+  <wsdl:message name="GetTicketTerminalsHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:portType name="PublicServiceSoap">
+    <wsdl:operation name="CNR_GetVehicles">
+      <wsdl:input message="tns:CNR_GetVehiclesSoapIn" />
+      <wsdl:output message="tns:CNR_GetVehiclesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleNumbers">
+      <wsdl:input message="tns:CNR_GetVehicleNumbersSoapIn" />
+      <wsdl:output message="tns:CNR_GetVehicleNumbersSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleTypes">
+      <wsdl:input message="tns:CNR_GetVehicleTypesSoapIn" />
+      <wsdl:output message="tns:CNR_GetVehicleTypesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CNR_RouteVariants">
+      <wsdl:input message="tns:CNR_RouteVariantsSoapIn" />
+      <wsdl:output message="tns:CNR_RouteVariantsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleDepartures">
+      <wsdl:input message="tns:CNR_GetVehicleDeparturesSoapIn" />
+      <wsdl:output message="tns:CNR_GetVehicleDeparturesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTimeline">
+      <wsdl:input message="tns:GetTimelineSoapIn" />
+      <wsdl:output message="tns:GetTimelineSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetRealDepartures">
+      <wsdl:input message="tns:CNR_GetRealDeparturesSoapIn" />
+      <wsdl:output message="tns:CNR_GetRealDeparturesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPlanedDeparutres">
+      <wsdl:input message="tns:GetPlanedDeparutresSoapIn" />
+      <wsdl:output message="tns:GetPlanedDeparutresSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPlanedDeparutresFullInfo">
+      <wsdl:input message="tns:GetPlanedDeparutresFullInfoSoapIn" />
+      <wsdl:output message="tns:GetPlanedDeparutresFullInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetNote">
+      <wsdl:input message="tns:GetNoteSoapIn" />
+      <wsdl:output message="tns:GetNoteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsOnStreet">
+      <wsdl:input message="tns:GetStopsOnStreetSoapIn" />
+      <wsdl:output message="tns:GetStopsOnStreetSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsByNumber">
+      <wsdl:input message="tns:GetStopsByNumberSoapIn" />
+      <wsdl:output message="tns:GetStopsByNumberSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsByName">
+      <wsdl:input message="tns:GetStopsByNameSoapIn" />
+      <wsdl:output message="tns:GetStopsByNameSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsDropDown">
+      <wsdl:input message="tns:GetStopsDropDownSoapIn" />
+      <wsdl:output message="tns:GetStopsDropDownSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleStops">
+      <wsdl:input message="tns:GetGoogleStopsSoapIn" />
+      <wsdl:output message="tns:GetGoogleStopsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DajGrafyGoogle">
+      <wsdl:input message="tns:DajGrafyGoogleSoapIn" />
+      <wsdl:output message="tns:DajGrafyGoogleSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DajGrafyGoogleKlient">
+      <wsdl:input message="tns:DajGrafyGoogleKlientSoapIn" />
+      <wsdl:output message="tns:DajGrafyGoogleKlientSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDayTypes">
+      <wsdl:input message="tns:GetDayTypesSoapIn" />
+      <wsdl:output message="tns:GetDayTypesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DajCentrumMapy">
+      <wsdl:input message="tns:DajCentrumMapySoapIn" />
+      <wsdl:output message="tns:DajCentrumMapySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRoutes">
+      <wsdl:input message="tns:GetRoutesSoapIn" />
+      <wsdl:output message="tns:GetRoutesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStreets">
+      <wsdl:input message="tns:GetStreetsSoapIn" />
+      <wsdl:output message="tns:GetStreetsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchConnection">
+      <wsdl:input message="tns:SearchConnectionSoapIn" />
+      <wsdl:output message="tns:SearchConnectionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTicketTerminals">
+      <wsdl:input message="tns:GetTicketTerminalsSoapIn" />
+      <wsdl:output message="tns:GetTicketTerminalsSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="PublicServiceHttpGet">
+    <wsdl:operation name="CNR_GetVehicles">
+      <wsdl:input message="tns:CNR_GetVehiclesHttpGetIn" />
+      <wsdl:output message="tns:CNR_GetVehiclesHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleNumbers">
+      <wsdl:input message="tns:CNR_GetVehicleNumbersHttpGetIn" />
+      <wsdl:output message="tns:CNR_GetVehicleNumbersHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleTypes">
+      <wsdl:input message="tns:CNR_GetVehicleTypesHttpGetIn" />
+      <wsdl:output message="tns:CNR_GetVehicleTypesHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsDropDown">
+      <wsdl:input message="tns:GetStopsDropDownHttpGetIn" />
+      <wsdl:output message="tns:GetStopsDropDownHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DajCentrumMapy">
+      <wsdl:input message="tns:DajCentrumMapyHttpGetIn" />
+      <wsdl:output message="tns:DajCentrumMapyHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStreets">
+      <wsdl:input message="tns:GetStreetsHttpGetIn" />
+      <wsdl:output message="tns:GetStreetsHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTicketTerminals">
+      <wsdl:input message="tns:GetTicketTerminalsHttpGetIn" />
+      <wsdl:output message="tns:GetTicketTerminalsHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="PublicServiceHttpPost">
+    <wsdl:operation name="CNR_GetVehicles">
+      <wsdl:input message="tns:CNR_GetVehiclesHttpPostIn" />
+      <wsdl:output message="tns:CNR_GetVehiclesHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleNumbers">
+      <wsdl:input message="tns:CNR_GetVehicleNumbersHttpPostIn" />
+      <wsdl:output message="tns:CNR_GetVehicleNumbersHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleTypes">
+      <wsdl:input message="tns:CNR_GetVehicleTypesHttpPostIn" />
+      <wsdl:output message="tns:CNR_GetVehicleTypesHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsDropDown">
+      <wsdl:input message="tns:GetStopsDropDownHttpPostIn" />
+      <wsdl:output message="tns:GetStopsDropDownHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DajCentrumMapy">
+      <wsdl:input message="tns:DajCentrumMapyHttpPostIn" />
+      <wsdl:output message="tns:DajCentrumMapyHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStreets">
+      <wsdl:input message="tns:GetStreetsHttpPostIn" />
+      <wsdl:output message="tns:GetStreetsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTicketTerminals">
+      <wsdl:input message="tns:GetTicketTerminalsHttpPostIn" />
+      <wsdl:output message="tns:GetTicketTerminalsHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="PublicServiceSoap" type="tns:PublicServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CNR_GetVehicles">
+      <soap:operation soapAction="http://PublicService/CNR_GetVehicles" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleNumbers">
+      <soap:operation soapAction="http://PublicService/CNR_GetVehicleNumbers" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleTypes">
+      <soap:operation soapAction="http://PublicService/CNR_GetVehicleTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_RouteVariants">
+      <soap:operation soapAction="http://PublicService/CNR_RouteVariants" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleDepartures">
+      <soap:operation soapAction="http://PublicService/CNR_GetVehicleDepartures" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTimeline">
+      <soap:operation soapAction="http://PublicService/GetTimeline" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetRealDepartures">
+      <soap:operation soapAction="http://PublicService/CNR_GetRealDepartures" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPlanedDeparutres">
+      <soap:operation soapAction="http://PublicService/GetPlanedDeparutres" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPlanedDeparutresFullInfo">
+      <soap:operation soapAction="http://PublicService/GetPlanedDeparutresFullInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNote">
+      <soap:operation soapAction="http://PublicService/GetNote" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsOnStreet">
+      <soap:operation soapAction="http://PublicService/GetStopsOnStreet" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsByNumber">
+      <soap:operation soapAction="http://PublicService/GetStopsByNumber" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsByName">
+      <soap:operation soapAction="http://PublicService/GetStopsByName" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsDropDown">
+      <soap:operation soapAction="http://PublicService/GetStopsDropDown" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleStops">
+      <soap:operation soapAction="http://PublicService/GetGoogleStops" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DajGrafyGoogle">
+      <soap:operation soapAction="http://PublicService/DajGrafyGoogle" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DajGrafyGoogleKlient">
+      <soap:operation soapAction="http://PublicService/DajGrafyGoogleKlient" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDayTypes">
+      <soap:operation soapAction="http://PublicService/GetDayTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DajCentrumMapy">
+      <soap:operation soapAction="http://PublicService/DajCentrumMapy" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRoutes">
+      <soap:operation soapAction="http://PublicService/GetRoutes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStreets">
+      <soap:operation soapAction="http://PublicService/GetStreets" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchConnection">
+      <soap:operation soapAction="http://PublicService/SearchConnection" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTicketTerminals">
+      <soap:operation soapAction="http://PublicService/GetTicketTerminals" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="PublicServiceSoap12" type="tns:PublicServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CNR_GetVehicles">
+      <soap12:operation soapAction="http://PublicService/CNR_GetVehicles" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleNumbers">
+      <soap12:operation soapAction="http://PublicService/CNR_GetVehicleNumbers" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleTypes">
+      <soap12:operation soapAction="http://PublicService/CNR_GetVehicleTypes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_RouteVariants">
+      <soap12:operation soapAction="http://PublicService/CNR_RouteVariants" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleDepartures">
+      <soap12:operation soapAction="http://PublicService/CNR_GetVehicleDepartures" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTimeline">
+      <soap12:operation soapAction="http://PublicService/GetTimeline" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetRealDepartures">
+      <soap12:operation soapAction="http://PublicService/CNR_GetRealDepartures" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPlanedDeparutres">
+      <soap12:operation soapAction="http://PublicService/GetPlanedDeparutres" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPlanedDeparutresFullInfo">
+      <soap12:operation soapAction="http://PublicService/GetPlanedDeparutresFullInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNote">
+      <soap12:operation soapAction="http://PublicService/GetNote" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsOnStreet">
+      <soap12:operation soapAction="http://PublicService/GetStopsOnStreet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsByNumber">
+      <soap12:operation soapAction="http://PublicService/GetStopsByNumber" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsByName">
+      <soap12:operation soapAction="http://PublicService/GetStopsByName" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsDropDown">
+      <soap12:operation soapAction="http://PublicService/GetStopsDropDown" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGoogleStops">
+      <soap12:operation soapAction="http://PublicService/GetGoogleStops" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DajGrafyGoogle">
+      <soap12:operation soapAction="http://PublicService/DajGrafyGoogle" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DajGrafyGoogleKlient">
+      <soap12:operation soapAction="http://PublicService/DajGrafyGoogleKlient" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDayTypes">
+      <soap12:operation soapAction="http://PublicService/GetDayTypes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DajCentrumMapy">
+      <soap12:operation soapAction="http://PublicService/DajCentrumMapy" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRoutes">
+      <soap12:operation soapAction="http://PublicService/GetRoutes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStreets">
+      <soap12:operation soapAction="http://PublicService/GetStreets" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchConnection">
+      <soap12:operation soapAction="http://PublicService/SearchConnection" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTicketTerminals">
+      <soap12:operation soapAction="http://PublicService/GetTicketTerminals" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="PublicServiceHttpGet" type="tns:PublicServiceHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="CNR_GetVehicles">
+      <http:operation location="/CNR_GetVehicles" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleNumbers">
+      <http:operation location="/CNR_GetVehicleNumbers" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleTypes">
+      <http:operation location="/CNR_GetVehicleTypes" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsDropDown">
+      <http:operation location="/GetStopsDropDown" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DajCentrumMapy">
+      <http:operation location="/DajCentrumMapy" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStreets">
+      <http:operation location="/GetStreets" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTicketTerminals">
+      <http:operation location="/GetTicketTerminals" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="PublicServiceHttpPost" type="tns:PublicServiceHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="CNR_GetVehicles">
+      <http:operation location="/CNR_GetVehicles" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleNumbers">
+      <http:operation location="/CNR_GetVehicleNumbers" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CNR_GetVehicleTypes">
+      <http:operation location="/CNR_GetVehicleTypes" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStopsDropDown">
+      <http:operation location="/GetStopsDropDown" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DajCentrumMapy">
+      <http:operation location="/DajCentrumMapy" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStreets">
+      <http:operation location="/GetStreets" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTicketTerminals">
+      <http:operation location="/GetTicketTerminals" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PublicService">
+    <wsdl:port name="PublicServiceSoap" binding="tns:PublicServiceSoap">
+      <soap:address location="http://sip.ztm.kielce.pl/PublicService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="PublicServiceSoap12" binding="tns:PublicServiceSoap12">
+      <soap12:address location="http://sip.ztm.kielce.pl/PublicService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="PublicServiceHttpGet" binding="tns:PublicServiceHttpGet">
+      <http:address location="http://sip.ztm.kielce.pl/PublicService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="PublicServiceHttpPost" binding="tns:PublicServiceHttpPost">
+      <http:address location="http://sip.ztm.kielce.pl/PublicService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

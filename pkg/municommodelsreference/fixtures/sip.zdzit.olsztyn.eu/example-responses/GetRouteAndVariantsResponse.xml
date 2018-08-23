@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+>
+    <soap:Body>
+        <GetRouteAndVariantsResponse xmlns="http://PublicService/">
+            <GetRouteAndVariantsResult>
+                <R xmlns="">
+                    <L l="1" o="KANTA" o2="Wysoka Brama - Kanta" wt="0" t="T" d="T"/>
+                    <L l="1" o="WYSOKA BRAMA" o2="Kanta - Wysoka Brama" wt="2" t="T" d="P"/>
+                    <L l="101" o="REDYKAJNY" o2="Dworzec Główny - Redykajny" wt="0" t="A" d="T"/>
+                    <L l="101" o="DWORZEC GŁÓWNY" o2="Redykajny - Dworzec Główny" wt="1" t="A"
+                       d="P"/>
+                    <L l="103" o="STARY DWÓR" o2="Olsztyńskie Zakłady Graficzne - Stary Dwór" wt="0"
+                       t="A" d="T"/>
+                    <L l="103" o="OLSZTYŃSKIE ZAKŁADY GRAFICZNE"
+                       o2="Stary Dwór - Olsztyńskie Zakłady Graficzne" wt="1" t="A" d="P"/>
+                    <L l="105" o="OSIEDLE MAZURSKIE" o2="Borkowskiego - Osiedle Mazurskie" wt="0"
+                       t="A" d="T"/>
+                    <L l="105" o="BORKOWSKIEGO" o2="Osiedle Mazurskie - Borkowskiego" wt="4" t="A"
+                       d="P"/>
+                    <L l="106" o="GUTKOWO" o2="Cementowa - Gutkowo" wt="0" t="A" d="T"/>
+                    <L l="106" o="CEMENTOWA" o2="Gutkowo - Cementowa" wt="3" t="A" d="P"/>
+                    <L l="107" o="DAJTKI" o2="Jakubowo - Dajtki" wt="0" t="A" d="T"/>
+                    <L l="107" o="JAKUBOWO" o2="Dajtki - Jakubowo" wt="4" t="A" d="P"/>
+                    <L l="108" o="DWORZEC GŁÓWNY przez SŁUPY i DYWITY"
+                       o2="Dworzec Główny - Dworzec Główny" wt="0" t="A" d="T"/>
+                    <L l="109" o="SŁONECZNY STOK" o2="Osiedle Podleśna - Słoneczny Stok" wt="0"
+                       t="A" d="T"/>
+                    <L l="109" o="OSIEDLE PODLEŚNA" o2="Słoneczny Stok - Osiedle Podleśna" wt="2"
+                       t="A" d="P"/>
+                    <L l="110" o="JAKUBOWO" o2="Polmozbyt - Jakubowo" wt="0" t="A" d="T"/>
+                    <L l="110" o="POLMOZBYT" o2="Jakubowo - Polmozbyt" wt="6" t="A" d="P"/>
+                    <L l="111" o="GUTKOWO" o2="Nagórki - Gutkowo" wt="0" t="A" d="T"/>
+                    <L l="111" o="NAGÓRKI" o2="Gutkowo - Nagórki" wt="2" t="A" d="P"/>
+                    <L l="112" o="DWORZEC GŁÓWNY przez DYWITY i SŁUPY"
+                       o2="Dworzec Główny - Dworzec Główny" wt="0" t="A" d="T"/>
+                    <L l="113" o="DAJTKI" o2="Pieczewo - Dajtki" wt="0" t="A" d="T"/>
+                    <L l="113" o="PIECZEWO" o2="Dajtki - Pieczewo" wt="2" t="A" d="P"/>
+                    <L l="116" o="TRACK" o2="Osiedle Mazurskie - Track" wt="0" t="A" d="T"/>
+                    <L l="116" o="OSIEDLE MAZURSKIE" o2="Track - Osiedle Mazurskie" wt="3" t="A"
+                       d="P"/>
+                    <L l="117" o="CMENTARZ DYWITY - BRAMA WSCHODNIA"
+                       o2="Osiedle Generałów - Cmentarz Dywity-Brama Wschodnia" wt="0" t="A" d="T"/>
+                    <L l="117" o="OSIEDLE GENERAŁÓW"
+                       o2="Cmentarz Dywity-Brama Wschodnia - Osiedle Generałów" wt="3" t="A" d="P"/>
+                    <L l="120" o="DWORZEC GŁÓWNY" o2="Pieczewo - Dworzec Główny" wt="0" t="A"
+                       d="T"/>
+                    <L l="120" o="PIECZEWO" o2="Dworzec Główny - Pieczewo" wt="2" t="A" d="P"/>
+                    <L l="121" o="CEMENTOWA" o2="Bartąska-Rondo - Cementowa" wt="0" t="A" d="T"/>
+                    <L l="121" o="BARTĄSKA - RONDO" o2="Cementowa - Bartąska-Rondo" wt="5" t="A"
+                       d="P"/>
+                    <L l="126" o="JAGIELLOŃSKA - OGRODY"
+                       o2="Osiedle Generałów - Jagiellońska-Ogrody" wt="0" t="A" d="T"/>
+                    <L l="126" o="OSIEDLE GENERAŁÓW" o2="Jagiellońska-Ogrody - Osiedle Generałów"
+                       wt="4" t="A" d="P"/>
+                    <L l="127" o="REDYKAJNY" o2="Witosa - Redykajny" wt="0" t="A" d="T"/>
+                    <L l="127" o="WITOSA" o2="Redykajny - Witosa" wt="2" t="A" d="P"/>
+                    <L l="128" o="OLSZTYŃSKIE ZAKŁADY GRAFICZNE"
+                       o2="Brzeziny - Olsztyńskie Zakłady Graficzne" wt="0" t="A" d="T"/>
+                    <L l="128" o="BRZEZINY" o2="Olsztyńskie Zakłady Graficzne - Brzeziny" wt="3"
+                       t="A" d="P"/>
+                    <L l="130" o="STARY DWÓR" o2="Pieczewo - Stary Dwór" wt="0" t="A" d="T"/>
+                    <L l="130" o="PIECZEWO" o2="Stary Dwór - Pieczewo" wt="1" t="A" d="P"/>
+                    <L l="131" o="INDYKPOL" o2="Pieczewo - Indykpol" wt="0" t="A" d="T"/>
+                    <L l="131" o="PIECZEWO" o2="Indykpol - Pieczewo" wt="3" t="A" d="P"/>
+                    <L l="136" o="JAGIELLOŃSKA - SZPITAL" o2="Bartąska-Rondo - Jagiellońska-Szpital"
+                       wt="0" t="A" d="T"/>
+                    <L l="136" o="BARTĄSKA - RONDO" o2="Jagiellońska-Szpital - Bartąska-Rondo"
+                       wt="3" t="A" d="P"/>
+                    <L l="141" o="CEMENTOWA" o2="Osiedle Generałów - Cementowa" wt="0" t="A" d="T"/>
+                    <L l="141" o="OSIEDLE GENERAŁÓW" o2="Cementowa - Osiedle Generałów" wt="2" t="A"
+                       d="P"/>
+                    <L l="2" o="KANTA" o2="Dworzec Główny - Kanta" wt="0" t="T" d="T"/>
+                    <L l="2" o="DWORZEC GŁÓWNY" o2="Kanta - Dworzec Główny" wt="2" t="T" d="P"/>
+                    <L l="201" o="SIKORSKIEGO-WILCZYŃSKIEGO"
+                       o2="Kutrzeby - Sikorskiego-Wilczyńskiego" wt="0" t="A" d="T"/>
+                    <L l="202" o="SIKORSKIEGO -WILCZYŃSKIEGO"
+                       o2="Pieczewo - Sikorskiego-Wilczyńskiego" wt="0" t="A" d="T"/>
+                    <L l="203" o="OSIEDLE GENERAŁÓW" o2="Andersa - Osiedle Generałów" wt="0" t="A"
+                       d="T"/>
+                    <L l="204" o="PIECZEWO" o2="Andersa - Pieczewo" wt="0" t="A" d="T"/>
+                    <L l="205" o="GALERIA WARMIŃSKA" o2="Tęczowy Las - Galeria Warmińska" wt="0"
+                       t="A" d="T"/>
+                    <L l="205" o="TĘCZOWY LAS" o2="Galeria Warmińska - Tęczowy Las" wt="2" t="A"
+                       d="P"/>
+                    <L l="3" o="UNIWERSYTET - PRAWOCHEŃSKIEGO"
+                       o2="Dworzec Główny - Uniwersytet-Prawocheńskiego" wt="0" t="T" d="T"/>
+                    <L l="3" o="DWORZEC GŁÓWNY" o2="Uniwersytet-Prawocheńskiego - Dworzec Główny"
+                       wt="1" t="T" d="P"/>
+                    <L l="304" o="WÓJTOWO" o2="Olsztyńskie Zakłady Graficzne - Wójtowo" wt="0" t="A"
+                       d="T"/>
+                    <L l="304" o="OLSZTYŃSKIE ZAKŁADY GRAFICZNE"
+                       o2="Wójtowo - Olsztyńskie Zakłady Graficzne" wt="1" t="A" d="P"/>
+                    <L l="307" o="PLAŻA MIEJSKA" o2="Witosa - Plaża Miejska" wt="0" t="A" d="T"/>
+                    <L l="307" o="WITOSA" o2="Plaża Miejska - Witosa" wt="1" t="A" d="P"/>
+                    <L l="D-1" o="DĄBRÓWKA WIELKA WIEŚ" o2="Bukwałd Wieś - Dąbrówka Wielka Wieś"
+                       wt="0" t="A" d="T"/>
+                    <L l="D-1" o="DYWITY" o2="Dąbrówka Wielka Wieś - Dywity" wt="1" t="A" d="P"/>
+                    <L l="D-1" o="BUKWAŁD WIEŚ" o2="Dywity - Bukwałd Wieś" wt="2" t="A" d="P"/>
+                    <L l="D-2" o="DYWITY" o2="Gradki wieś - Dywity" wt="0" t="A" d="T"/>
+                    <L l="D-2" o="GRADKI WIEŚ" o2="Dywity - Gradki wieś" wt="1" t="A" d="P"/>
+                    <L l="D-3" o="JAGIELLOŃSKA-OGRODY" o2="Frączki wieś - Jagiellońska-Ogrody"
+                       wt="0" t="A" d="T"/>
+                    <L l="D-3" o="FRĄCZKI WIEŚ" o2="Jagiellońska-Ogrody - Frączki wieś" wt="1" t="A"
+                       d="P"/>
+                    <L l="N01" o="OLSZTYŃSKIE ZAKŁADY GRAFICZNE p. NAGÓRKI, JAROTY"
+                       o2="Olsztyńskie Zakłady Graficzne - Olsztyńskie Zakłady Graficzne" wt="0"
+                       t="A" d="T"/>
+                    <L l="N02" o="DWORZEC GŁÓWNY przez SŁONECZNY STOK, DAJTKI"
+                       o2="Dworzec Główny - Dworzec Główny" wt="0" t="A" d="T"/>
+                </R>
+            </GetRouteAndVariantsResult>
+        </GetRouteAndVariantsResponse>
+    </soap:Body>
+</soap:Envelope>

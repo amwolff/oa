@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+>
+    <soap:Body>
+        <CNR_GetVehiclesResponse xmlns="http://PublicService/">
+            <CNR_GetVehiclesResult>
+                <VL xmlns="">
+                    <p>[3001, 3001, "", "", "", 0, 0, 0, 0, 20.50278, 53.7367, 20.50278, 53.7367,
+                        1666, "00:27:46", 6, "", 7322,"16:10","1 ","2","P",1666, "T", "NK
+                        ","","WYSOKA BRAMA", -1.00]
+                    </p>
+                    <p>[3010, 3010, "1 ", "0", "T", 7345, 5, 622, 425, 20.48598, 53.7637, 20.48578,
+                        53.76425, 11, "00:00:11", 1, "15:35", 7346,"16:30","1 ","2","P",0, "T", "NK
+                        ","KANTA","WYSOKA BRAMA", 346.50]
+                    </p>
+                    <p>[3008, 3008, "", "", "", 0, 0, 0, 0, 20.50318, 53.73679, 20.50318, 53.73679,
+                        466, "00:07:46", 6, "", 6057,"15:50","1 ","2","P",466, "T", "NK ","","WYSOKA
+                        BRAMA", -1.00]
+                    </p>
+                    <p>[3011, 3011, "1 ", "2", "P", 7292, 8, 621, 93, 20.48654, 53.76242, 20.48657,
+                        53.76233, 4, "00:00:04", 1, "15:30", 7293,"15:55","1 ","0","T",0, "T", "NK
+                        ","WYSOKA BRAMA","KANTA", 169.21]
+                    </p>
+                </VL>
+            </CNR_GetVehiclesResult>
+        </CNR_GetVehiclesResponse>
+    </soap:Body>
+</soap:Envelope>
