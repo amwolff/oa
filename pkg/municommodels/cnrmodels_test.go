@@ -24,13 +24,13 @@ func TestSanitize(t *testing.T) {
 	}
 	r0 := r.CNRGetVehiclesResult.Sanitized[0]
 
-	if err := r.DeprecatedSanitize(); err != nil {
-		t.Fatalf("DeprecatedSanitize returned an error: %v", err)
+	if err := r._Sanitize(); err != nil {
+		t.Fatalf("_Sanitize returned an error: %v", err)
 	}
 	r1 := r.CNRGetVehiclesResult.Sanitized[1]
 
 	if !reflect.DeepEqual(r0, r1) {
-		t.Fatal("Sanitize and DeprecatedSanitize produce different output")
+		t.Fatal("Sanitize and _Sanitize produce different output")
 	} else {
 		t.Log("OK")
 	}

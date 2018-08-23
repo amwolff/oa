@@ -108,9 +108,9 @@ type SanitizedCNRGetVehiclesResult struct {
 	// JestStatus: 0
 }
 
-// Deprecated: DeprecatedSanitize is deprecated. Leaving for the testing
-// purposes. Please use Sanitize.
-func (r *CNRGetVehiclesResponse) DeprecatedSanitize() error {
+// Deprecated: _Sanitize is deprecated. Leaving for testing purposes. Please use
+// Sanitize.
+func (r *CNRGetVehiclesResponse) _Sanitize() error {
 	// Long story short: result from this method is insanely ugly and impossible
 	// to use without proper sanitation. This function is going to extract each
 	// paragraph and extract its data into the additional structure in the
