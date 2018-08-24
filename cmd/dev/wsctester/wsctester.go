@@ -44,6 +44,7 @@ func main() {
 			canc()
 			logger.WithError(err).Fatal("CallCNRGetVehicles")
 		}
+		canc()
 		vehiclesResps = append(vehiclesResps, vehiclesResp)
 	}
 
