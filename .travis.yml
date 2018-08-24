@@ -10,6 +10,8 @@ matrix:
 before_install:
 - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 - dep ensure
+install:
+- # Prevent travis-ci from calling its default scripts
 script:
 - diff -u <(echo -n) <(gofmt -d -s $(go list -f '{{ .Dir }}' ./... | grep -v /vendor/))
 - go vet $(go list ./... | grep -v /vendor/)
