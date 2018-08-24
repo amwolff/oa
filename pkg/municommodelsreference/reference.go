@@ -917,9 +917,7 @@ func NewSOAPClient(url string, tls bool, auth *BasicAuth) *SOAPClient {
 }
 
 func (s *SOAPClient) Call(soapAction string, request, response interface{}) error {
-	envelope := SOAPEnvelope{
-	// Header:        SoapHeader{},
-	}
+	envelope := SOAPEnvelope{ /* Header: SoapHeader{} */ }
 
 	envelope.Body.Content = request
 	buffer := new(bytes.Buffer)
