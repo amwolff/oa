@@ -21,9 +21,9 @@ As it's nearly impossible to maintain agility and write up-to-date docs for the 
 ### How to put it on
 TODO(amw): write about it.
 ### CI status
-TODO(amw): write about it.
+[![Build Status](https://travis-ci.com/amwolff/oa.svg?token=8LTVaXtVR2rYts8pwRmn&branch=master)](https://travis-ci.com/amwolff/oa)
 ### Milestones
-TODO(amw): write something.
+Check out the _Issues_ and the _Projects_ sections.
 ### Code Style Guides
 - For Go: [Go Code Review Comments
 ](https://github.com/golang/go/wiki/CodeReviewComments)
