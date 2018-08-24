@@ -11,6 +11,6 @@ before_install:
 - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 - dep ensure
 script:
-# - diff -u <(echo -n) <(gofmt -d -s .)
-- go tool vet .
+- diff -u <(echo -n) <(gofmt -d .)
+- go vet $(go list ./... | grep -v github.com/amwolff/oa/vendor/)
 - go test -v -race ./...

@@ -1,14 +1,14 @@
 package municommodelsreference
 
 import (
-	"time"
 	"bytes"
 	"crypto/tls"
 	"encoding/xml"
 	"io/ioutil"
-	"net/http"
 	"log"
 	"net"
+	"net/http"
+	"time"
 )
 
 // against "unused imports"
@@ -918,7 +918,7 @@ func NewSOAPClient(url string, tls bool, auth *BasicAuth) *SOAPClient {
 
 func (s *SOAPClient) Call(soapAction string, request, response interface{}) error {
 	envelope := SOAPEnvelope{
-		// Header:        SoapHeader{},
+	// Header:        SoapHeader{},
 	}
 
 	envelope.Body.Content = request
