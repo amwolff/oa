@@ -104,7 +104,7 @@ func (c *WebServiceClient) UnmarshalSOAP(data []byte, v interface{}) error {
 
 	b.Reset(e.Body.InnerXML)
 
-	if err := d.Decode(&v); err != nil {
+	if err := d.Decode(v); err != nil {
 		return err
 	}
 
