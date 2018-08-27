@@ -8,11 +8,46 @@ import (
 	"github.com/pkg/errors"
 )
 
+func InsertGetRouteAndVariantsResponseIntoDb(dbSess dbr.SessionRunner,
+	routes municommodels.GetRouteAndVariantsResponse, fetchTime time.Time) error {
+
+	q := dbSess.InsertInto("olsztyn_static.routes").Columns(
+		"ts",
+
+		"number",
+		"description",
+		"description2",
+		"variant",
+		"transport",
+		"direction",
+	)
+
+	for _, l := range routes.GetRouteAndVariantsResult.L {
+		q.Values(
+			fetchTime,
+
+			l.Number,
+			l.Description,
+			l.Description2,
+			l.Variant,
+			l.Transport,
+			l.Direction,
+		)
+	}
+
+	if _, err := q.Exec(); err != nil {
+		return errors.Wrap(err, "cannot insert routes dump into the database")
+	}
+
+	return nil
+}
+
 func InsertCNRGetVehiclesResponsesIntoDb(dbSess dbr.SessionRunner,
 	vehicles []municommodels.CNRGetVehiclesResponse, fetchTime time.Time) error {
 
-	q := dbSess.InsertInto("olsztyn.live").Columns(
+	q := dbSess.InsertInto("olsztyn_live.vehicles").Columns(
 		"ts",
+
 		"nr_radia",
 		"nb",
 		"numer_lini",
@@ -42,6 +77,7 @@ func InsertCNRGetVehiclesResponsesIntoDb(dbSess dbr.SessionRunner,
 		"opis_tabl",
 		"nast_opis_tabl",
 		"wektor",
+
 		"raw",
 	)
 
@@ -49,6 +85,7 @@ func InsertCNRGetVehiclesResponsesIntoDb(dbSess dbr.SessionRunner,
 		for i, s := range v.CNRGetVehiclesResult.Sanitized {
 			q.Values(
 				fetchTime,
+
 				s.NrRadia,
 				s.Nb,
 				s.NumerLini,
@@ -78,6 +115,7 @@ func InsertCNRGetVehiclesResponsesIntoDb(dbSess dbr.SessionRunner,
 				s.OpisTabl,
 				s.NastOpisTabl,
 				s.Wektor,
+
 				v.CNRGetVehiclesResult.Unsanitized[i],
 			)
 		}
