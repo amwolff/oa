@@ -91,7 +91,7 @@ func NewWebServiceClient(logger logrus.FieldLogger, name, UA, URL string) *WebSe
 	return c
 }
 
-func (c *WebServiceClient) UnmarshalSOAP(data []byte, v interface{}) error {
+func (c WebServiceClient) UnmarshalSOAP(data []byte, v interface{}) error {
 	b := bytes.NewReader(data)
 	d := xml.NewDecoder(b)
 
@@ -104,14 +104,14 @@ func (c *WebServiceClient) UnmarshalSOAP(data []byte, v interface{}) error {
 
 	b.Reset(e.Body.InnerXML)
 
-	if err := d.Decode(&v); err != nil {
+	if err := d.Decode(v); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (c *WebServiceClient) call(ctx context.Context, cookies []http.Cookie, method string,
+func (c WebServiceClient) call(ctx context.Context, cookies []http.Cookie, method string,
 	data interface{}) ([]byte, error) {
 
 	reqBody, err := xml.Marshal(data)
@@ -183,7 +183,7 @@ func (c *WebServiceClient) call(ctx context.Context, cookies []http.Cookie, meth
 	return respBody, nil
 }
 
-func (c *WebServiceClient) CallGetRouteAndVariants(ctx context.Context, cookies []http.Cookie,
+func (c WebServiceClient) CallGetRouteAndVariants(ctx context.Context, cookies []http.Cookie,
 	data GetRouteAndVariants) (*GetRouteAndVariantsResponse, error) {
 
 	b, err := c.call(ctx, cookies, "GetRouteAndVariants", data)
@@ -199,7 +199,7 @@ func (c *WebServiceClient) CallGetRouteAndVariants(ctx context.Context, cookies 
 	return ret, nil
 }
 
-func (c *WebServiceClient) CallCNRGetVehicles(ctx context.Context, cookies []http.Cookie,
+func (c WebServiceClient) CallCNRGetVehicles(ctx context.Context, cookies []http.Cookie,
 	data CNRGetVehicles) (*CNRGetVehiclesResponse, error) {
 
 	b, err := c.call(ctx, cookies, "CNR_GetVehicles", data)

@@ -32,3 +32,11 @@
 [[constraint]]
   name = "github.com/pkg/errors"
   version = "0.8.0"
+
+[[constraint]]
+  name = "github.com/spf13/viper"
+  version = "1.1.0"
+
+[[constraint]]
+  name = "github.com/gocraft/dbr"
+  version = "2.2.0"

@@ -9,11 +9,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var reqTimeout = 10 * time.Second
-
 func main() {
 	logger := logrus.New()
-	sessionCookies := []http.Cookie{{Name: "ASP.NET_SessionId", Value: "kx0qshioeixcqio2le5dbvw4"}}
+	sessionCookies := []http.Cookie{{Name: "ASP.NET_SessionId", Value: "m2yxf41efvby2tj4z5m1esiy"}}
 
 	wsc := municommodels.NewWebServiceClient(
 		logger,
@@ -38,7 +36,7 @@ func main() {
 			D: l.Direction,
 		}
 		logger.Infof("Requesting for Number: %s Direction: %s", l.Number, l.Direction)
-		ctx, canc := context.WithTimeout(context.Background(), (5 * time.Second))
+		ctx, canc := context.WithTimeout(context.Background(), time.Second)
 		vehiclesResp, err := wsc.CallCNRGetVehicles(ctx, sessionCookies, vehiclesReq)
 		if err != nil {
 			canc()
@@ -50,7 +48,7 @@ func main() {
 
 	for _, v := range vehiclesResps {
 		for _, s := range v.CNRGetVehiclesResult.Sanitized {
-			logger.Printf("Numer: %d Kurs: %d Linia: %s Cel: %s", s.Nb, s.IdKursu, s.NumerLini, s.OpisTabl)
+			logger.WithTime(time.Now()).Printf("Numer: %d Kurs: %d Linia: %s Cel: %s", s.Nb, s.IdKursu, s.NumerLini, s.OpisTabl)
 		}
 	}
 }
