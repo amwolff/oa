@@ -3,7 +3,7 @@ package dataharvest
 import (
 	"time"
 
-	"oa/pkg/feeds/zdzit"
+	"github.com/amwolff/oa/pkg/feeds/zdzit"
 	"github.com/amwolff/oa/pkg/municommodels"
 	"github.com/gocraft/dbr"
 	"github.com/pkg/errors"
