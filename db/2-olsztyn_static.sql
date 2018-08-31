@@ -16,3 +16,15 @@ CREATE TABLE olsztyn_static.routes (
   transport    VARCHAR(1),
   direction    VARCHAR(1)
 );
+
+CREATE TABLE olsztyn_static.stops (
+  id           SERIAL                   NOT NULL PRIMARY KEY,
+  ts           TIMESTAMP WITH TIME ZONE NOT NULL,
+
+  number       VARCHAR(7),
+  name         VARCHAR,
+  streetName   VARCHAR,
+  coordinatesX FLOAT(20),
+  coordinatesY FLOAT(20)
+);
+
