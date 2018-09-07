@@ -20,8 +20,8 @@ type CNRGetVehicles struct {
 
 	XMLName xml.Name `xml:"http://PublicService/ CNR_GetVehicles"`
 
-	// Fields names are reverse engineered (again) from the biggest
-	// (ugliest?) JS on the site.
+	// Fields names are reverse engineered (again) from the biggest (ugliest?)
+	// JS on the site.
 	//
 	// It goes like this:
 	// s:  some kind of token
@@ -49,8 +49,8 @@ type CNRGetVehiclesResponse struct {
 }
 
 type SanitizedCNRGetVehiclesResult struct {
-	// Fields names are reverse engineered (again) from the biggest
-	// (ugliest?) JS on the site.
+	// Fields names are reverse engineered (again) from the biggest (ugliest?)
+	// JS on the site.
 	NrRadia          int
 	Nb               int
 	NumerLini        string
@@ -248,6 +248,232 @@ func (r *CNRGetVehiclesResponse) _Sanitize() error {
 	return nil
 }
 
+func sanitize(u string) (SanitizedCNRGetVehiclesResult, error) {
+	var (
+		s      SanitizedCNRGetVehiclesResult
+		fields []interface{}
+	)
+
+	if err := json.Unmarshal([]byte(u), &fields); err != nil {
+		return s, errors.Wrap(err, "cannot unmarshal as JSON")
+	}
+
+	f0, ok := fields[0].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[0],
+			reflect.TypeOf(f0))
+	}
+
+	f1, ok := fields[1].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[1],
+			reflect.TypeOf(f1))
+	}
+
+	f5, ok := fields[5].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[5],
+			reflect.TypeOf(f5))
+	}
+
+	f6, ok := fields[6].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[6],
+			reflect.TypeOf(f6))
+	}
+
+	f7, ok := fields[7].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[7],
+			reflect.TypeOf(f7))
+	}
+
+	f8, ok := fields[8].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[8],
+			reflect.TypeOf(f8))
+	}
+
+	f9, ok := fields[9].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[9],
+			reflect.TypeOf(f9))
+	}
+
+	f10, ok := fields[10].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[10],
+			reflect.TypeOf(f10))
+	}
+
+	f11, ok := fields[11].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[11],
+			reflect.TypeOf(f11))
+	}
+
+	f12, ok := fields[12].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[12],
+			reflect.TypeOf(f12))
+	}
+
+	f13, ok := fields[13].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[13],
+			reflect.TypeOf(f13))
+	}
+
+	f15, ok := fields[15].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[15],
+			reflect.TypeOf(f15))
+	}
+
+	f17, ok := fields[17].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[17],
+			reflect.TypeOf(f17))
+	}
+
+	f22, ok := fields[22].(float64)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[22],
+			reflect.TypeOf(f22))
+	}
+
+	var f27 float64 = -1
+	if len(fields) > 27 {
+		f27, ok = fields[27].(float64)
+		if !ok {
+			return s, errors.Errorf("cannot assert %v (type: %v) as type float64", fields[27],
+				reflect.TypeOf(f27))
+		}
+	}
+
+	s2, ok := fields[2].(string)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[2],
+			reflect.TypeOf(s2))
+	}
+
+	s3, ok := fields[3].(string)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[3],
+			reflect.TypeOf(s3))
+	}
+
+	s4, ok := fields[4].(string)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[4],
+			reflect.TypeOf(s4))
+	}
+
+	s14, ok := fields[14].(string)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[14],
+			reflect.TypeOf(s14))
+	}
+
+	s16, ok := fields[16].(string)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[16],
+			reflect.TypeOf(s16))
+	}
+
+	s18, ok := fields[18].(string)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[18],
+			reflect.TypeOf(s18))
+	}
+
+	s19, ok := fields[19].(string)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[19],
+			reflect.TypeOf(s19))
+	}
+
+	s20, ok := fields[20].(string)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[20],
+			reflect.TypeOf(s20))
+	}
+
+	s21, ok := fields[21].(string)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[21],
+			reflect.TypeOf(s21))
+	}
+
+	s23, ok := fields[23].(string)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[23],
+			reflect.TypeOf(s23))
+	}
+	s23 = html.UnescapeString(strings.TrimSpace(s23))
+
+	s24, ok := fields[24].(string)
+	if !ok {
+		return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[24],
+			reflect.TypeOf(s24))
+	}
+
+	var s25 string
+	if len(fields) > 25 {
+		s25, ok = fields[25].(string)
+		if !ok {
+			return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[25],
+				reflect.TypeOf(s25))
+		}
+		s25 = html.UnescapeString(strings.TrimSpace(s25))
+	}
+
+	var s26 string
+	if len(fields) > 26 {
+		s26, ok = fields[26].(string)
+		if !ok {
+			return s, errors.Errorf("cannot assert %v (type: %v) as type string", fields[26],
+				reflect.TypeOf(s26))
+		}
+		s26 = html.UnescapeString(strings.TrimSpace(s26))
+	}
+
+	// These casts are generally safe
+	s = SanitizedCNRGetVehiclesResult{
+		NrRadia:          int(f0),
+		Nb:               int(f1),
+		NumerLini:        html.UnescapeString(strings.TrimSpace(s2)),
+		WarTrasy:         html.UnescapeString(strings.TrimSpace(s3)),
+		Kierunek:         html.UnescapeString(strings.TrimSpace(s4)),
+		IdKursu:          int(f5),
+		LpPrzyst:         int(f6),
+		DrogaPlan:        int(f7),
+		DrogaWyko:        int(f8),
+		Dlugosc:          f9,
+		Szerokosc:        f10,
+		PrevDlugosc:      f11,
+		PrevSzerokosc:    f12,
+		Odchylenie:       int(f13),
+		OdchylenieStr:    html.UnescapeString(strings.TrimSpace(s14)),
+		Stan:             int(f15),
+		PlanGodzRozp:     html.UnescapeString(strings.TrimSpace(s16)),
+		NastIdKursu:      int(f17),
+		NastPlanGodzRozp: html.UnescapeString(strings.TrimSpace(s18)),
+		NastNumLini:      html.UnescapeString(strings.TrimSpace(s19)),
+		NastWarTrasy:     html.UnescapeString(strings.TrimSpace(s20)),
+		NastKierunek:     html.UnescapeString(strings.TrimSpace(s21)),
+		IleSekDoOdjazdu:  int(f22),
+		TypPojazdu:       s23,
+		Transport:        s23,
+		Cechy:            html.UnescapeString(strings.TrimSpace(s24)),
+		OpisTabl:         s25,
+		NastOpisTabl:     s26,
+		Wektor:           f27,
+	}
+
+	return s, nil
+}
+
 func (r *CNRGetVehiclesResponse) Sanitize() error {
 	// Long story short: result from this method is insanely ugly and impossible
 	// to use without proper sanitation. This function is going to extract each
@@ -255,222 +481,9 @@ func (r *CNRGetVehiclesResponse) Sanitize() error {
 	// response struct into fields, which names were extracted from the reverse
 	// engineered script.
 	for _, u := range r.CNRGetVehiclesResult.Unsanitized {
-		var fields []interface{}
-		if err := json.Unmarshal([]byte(u), &fields); err != nil {
-			return errors.Wrap(err, "cannot unmarshal as JSON")
-		}
-
-		f0, ok := fields[0].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[0],
-				reflect.TypeOf(f0))
-		}
-
-		f1, ok := fields[1].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[1],
-				reflect.TypeOf(f1))
-		}
-
-		f5, ok := fields[5].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[5],
-				reflect.TypeOf(f5))
-		}
-
-		f6, ok := fields[6].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[6],
-				reflect.TypeOf(f6))
-		}
-
-		f7, ok := fields[7].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[7],
-				reflect.TypeOf(f7))
-		}
-
-		f8, ok := fields[8].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[8],
-				reflect.TypeOf(f8))
-		}
-
-		f9, ok := fields[9].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[9],
-				reflect.TypeOf(f9))
-		}
-
-		f10, ok := fields[10].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[10],
-				reflect.TypeOf(f10))
-		}
-
-		f11, ok := fields[11].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[11],
-				reflect.TypeOf(f11))
-		}
-
-		f12, ok := fields[12].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[12],
-				reflect.TypeOf(f12))
-		}
-
-		f13, ok := fields[13].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[13],
-				reflect.TypeOf(f13))
-		}
-
-		f15, ok := fields[15].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[15],
-				reflect.TypeOf(f15))
-		}
-
-		f17, ok := fields[17].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[17],
-				reflect.TypeOf(f17))
-		}
-
-		f22, ok := fields[22].(float64)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[22],
-				reflect.TypeOf(f22))
-		}
-
-		var f27 float64 = -1
-		if len(fields) > 27 {
-			f27, ok = fields[27].(float64)
-			if !ok {
-				return errors.Errorf("cannot assert %v (type: %v) as type float64", fields[27],
-					reflect.TypeOf(f27))
-			}
-		}
-
-		s2, ok := fields[2].(string)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type string", fields[2],
-				reflect.TypeOf(s2))
-		}
-
-		s3, ok := fields[3].(string)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type string", fields[3],
-				reflect.TypeOf(s3))
-		}
-
-		s4, ok := fields[4].(string)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type string", fields[4],
-				reflect.TypeOf(s4))
-		}
-
-		s14, ok := fields[14].(string)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type string", fields[14],
-				reflect.TypeOf(s14))
-		}
-
-		s16, ok := fields[16].(string)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type string", fields[16],
-				reflect.TypeOf(s16))
-		}
-
-		s18, ok := fields[18].(string)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type string", fields[18],
-				reflect.TypeOf(s18))
-		}
-
-		s19, ok := fields[19].(string)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type string", fields[19],
-				reflect.TypeOf(s19))
-		}
-
-		s20, ok := fields[20].(string)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type string", fields[20],
-				reflect.TypeOf(s20))
-		}
-
-		s21, ok := fields[21].(string)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type string", fields[21],
-				reflect.TypeOf(s21))
-		}
-
-		s23, ok := fields[23].(string)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type string", fields[23],
-				reflect.TypeOf(s23))
-		}
-		s23 = html.UnescapeString(strings.TrimSpace(s23))
-
-		s24, ok := fields[24].(string)
-		if !ok {
-			return errors.Errorf("cannot assert %v (type: %v) as type string", fields[24],
-				reflect.TypeOf(s24))
-		}
-
-		var s25 string
-		if len(fields) > 25 {
-			s25, ok = fields[25].(string)
-			if !ok {
-				return errors.Errorf("cannot assert %v (type: %v) as type string", fields[25],
-					reflect.TypeOf(s25))
-			}
-			s25 = html.UnescapeString(strings.TrimSpace(s25))
-		}
-
-		var s26 string
-		if len(fields) > 26 {
-			s26, ok = fields[26].(string)
-			if !ok {
-				return errors.Errorf("cannot assert %v (type: %v) as type string", fields[26],
-					reflect.TypeOf(s26))
-			}
-			s26 = html.UnescapeString(strings.TrimSpace(s26))
-		}
-
-		// These casts are generally safe
-		s := SanitizedCNRGetVehiclesResult{
-			NrRadia:          int(f0),
-			Nb:               int(f1),
-			NumerLini:        html.UnescapeString(strings.TrimSpace(s2)),
-			WarTrasy:         html.UnescapeString(strings.TrimSpace(s3)),
-			Kierunek:         html.UnescapeString(strings.TrimSpace(s4)),
-			IdKursu:          int(f5),
-			LpPrzyst:         int(f6),
-			DrogaPlan:        int(f7),
-			DrogaWyko:        int(f8),
-			Dlugosc:          f9,
-			Szerokosc:        f10,
-			PrevDlugosc:      f11,
-			PrevSzerokosc:    f12,
-			Odchylenie:       int(f13),
-			OdchylenieStr:    html.UnescapeString(strings.TrimSpace(s14)),
-			Stan:             int(f15),
-			PlanGodzRozp:     html.UnescapeString(strings.TrimSpace(s16)),
-			NastIdKursu:      int(f17),
-			NastPlanGodzRozp: html.UnescapeString(strings.TrimSpace(s18)),
-			NastNumLini:      html.UnescapeString(strings.TrimSpace(s19)),
-			NastWarTrasy:     html.UnescapeString(strings.TrimSpace(s20)),
-			NastKierunek:     html.UnescapeString(strings.TrimSpace(s21)),
-			IleSekDoOdjazdu:  int(f22),
-			TypPojazdu:       s23,
-			Transport:        s23,
-			Cechy:            html.UnescapeString(strings.TrimSpace(s24)),
-			OpisTabl:         s25,
-			NastOpisTabl:     s26,
-			Wektor:           f27,
+		s, err := sanitize(u)
+		if err != nil {
+			return errors.Wrap(err, "sanitize")
 		}
 		r.CNRGetVehiclesResult.Sanitized = append(r.CNRGetVehiclesResult.Sanitized, s)
 	}

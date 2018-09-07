@@ -37,7 +37,5 @@ CREATE TABLE olsztyn_live.vehicles (
   cechy               VARCHAR(3),
   opis_tabl           VARCHAR,
   nast_opis_tabl      VARCHAR,
-  wektor              NUMERIC(5, 2),
-
-  raw                 VARCHAR
+  wektor              NUMERIC(5, 2)
 );
