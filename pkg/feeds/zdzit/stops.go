@@ -1,64 +1,106 @@
 package zdzit
 
 import (
+	"bytes"
 	"encoding/csv"
-	"net/http"
+	"fmt"
+	"github.com/jlaffaye/ftp"
 	"strconv"
 	"strings"
+	"time"
 )
 
-type GetBusStopsResponse struct {
-	GetBusStopsResult struct {
-		Parsed []BusStop
-	}
-}
-
 type BusStop struct {
-	number        string
-	name          string
-	street_name   string
-	coordinates_X float64
-	coordinates_Y float64
+	Number     string
+	Name       string
+	StreetName string
+	Latitude   float64
+	Longitude  float64
 }
 
-//TODO: Can't retrieve data from ftp yet
-func ReadCSVFromURL(url string) ([][]string, error) {
+var AllBusStops []BusStop
 
-	response, err := http.Get(url)
+
+func ReadCSVFromFTP(url string) ([][]string, error) {
+
+	conn, err := ftp.Dial(url)
 
 	if err != nil {
-		return nil, err
+		fmt.Println(err)
 	}
 
-	defer response.Body.Close()
-	r := csv.NewReader(response.Body)
+	defer conn.Quit()
+
+	if err := conn.Login("anonymous", "anonymous"); err != nil {
+		fmt.Println(err)
+	}
+
+	// LOOKING FOR LATEST CSV FILE
+
+	timeNow := time.Now()
+	timeNow = timeNow.UTC()
+	offset := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	min := timeNow.Sub(offset)
+	var NewestCSV string
+
+	entries, _ := conn.List("")
+
+	for _, entry := range entries {
+		date := entry.Time
+		k := timeNow.Sub(date)
+
+		if k < min {
+			min = k
+			if entry.Name[0] == 'g' {
+				NewestCSV = entry.Name
+			}
+		}
+	}
+
+	// READING DATA FROM CSV
+
+	data, err := conn.Retr(NewestCSV)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	buf := new(bytes.Buffer)
+	data.Read(buf.Bytes())
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer data.Close()
+
+	r := csv.NewReader(data)
 	r.Comma = ';'
+	file, err := r.ReadAll()
 
-	data, err := r.ReadAll()
 	if err != nil {
-		return nil, err
+		fmt.Println(err)
 	}
 
-	return data, nil
+	return file, nil
 }
 
-func (r * GetBusStopsResponse) ParseData(file [][]string) error {
+func ParseData(file [][]string) error {
 
 	for _, line := range file {
-
-		splitted_cords := strings.Split(line[3],",")
-		f1, err := strconv.ParseFloat(splitted_cords[0], 64)
+		splittedCords := strings.Split(line[3],",")
+		f1, err := strconv.ParseFloat(splittedCords[0], 64)
 
 		//TODO: not exactly a great idea
 		if err != nil {
 			f1 = 0
 		}
 
-		if len(splitted_cords) <= 1 {
+		if len(splittedCords) <= 1 {
 			continue
 		}
 
-		f2, err := strconv.ParseFloat(splitted_cords[1], 64)
+		f2, err := strconv.ParseFloat(splittedCords[1], 64)
 
 		//same
 		if err != nil {
@@ -66,17 +108,30 @@ func (r * GetBusStopsResponse) ParseData(file [][]string) error {
 		}
 
 		bs := BusStop{
-			number:        line[0],
-			name:          line[1],
-			street_name:   line[2],
-			coordinates_X: f1,
-			coordinates_Y: f2,
+			Number:     line[0],
+			Name:       line[1],
+			StreetName: line[2],
+			Latitude:   f1,
+			Longitude:  f2,
 		}
 
-		r.GetBusStopsResult.Parsed = append(r.GetBusStopsResult.Parsed, bs)
+		AllBusStops = append(AllBusStops, bs)
 	}
 
 	return nil
+}
+
+func GetBusStops() ([]BusStop, error) {
+
+	url := "helios.zdzit.olsztyn.eu:21"
+	data, err := ReadCSVFromFTP(url)
+
+	if err != nil {
+		fmt.Println("error")
+	}
+
+	ParseData(data)
+	return AllBusStops, nil
 }
 
 
