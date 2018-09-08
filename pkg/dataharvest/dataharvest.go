@@ -3,7 +3,7 @@ package dataharvest
 import (
 	"time"
 
-	"github.com/amwolff/oa/pkg/feeds/zdzit"
+	"oa/pkg/feeds/zdzit"
 	"github.com/amwolff/oa/pkg/municommodels"
 	"github.com/gocraft/dbr"
 	"github.com/pkg/errors"
@@ -129,8 +129,7 @@ func InsertCNRGetVehiclesResponsesIntoDb(dbSess dbr.SessionRunner,
 	return nil
 }
 
-func InsertGetBusStopsIntoDb(dbSess dbr.SessionRunner,
-	stops []zdzit.GetBusStopsResponse, fetchTime time.Time) error {
+func InsertGetBusStopsIntoDb(dbSess dbr.SessionRunner) error {
 
 	q := dbSess.InsertInto("olsztyn_static.stops").Columns(
 		"ts",
@@ -138,22 +137,21 @@ func InsertGetBusStopsIntoDb(dbSess dbr.SessionRunner,
 		"number",
 		"name",
 		"street_name",
-		"coordinates_X",
-		"coordinates_Y",
+		"latitude",
+		"longitude",
 	)
 
+	stops := zdzit.GetBusStops()
 	for _, record := range stops {
-		for _, cell := range record.GetBusStopsResult.Parsed {
 			q.Values(
-				fetchTime,
+				zdzit.UploadTime,
 
-				cell.number,
-				cell.name,
-				cell.street_name,
-				cell.coordinates_X,
-				cell.coordinates_Y,
+				record.Number,
+				record.Name,
+				record.StreetName,
+				record.Latitude,
+				record.Longitude,
 			)
-		}
 	}
 
 	if _, err := q.Exec(); err != nil {
