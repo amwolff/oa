@@ -151,7 +151,12 @@ func insertVehiclesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
 		if err := dataharvest.InsertCNRGetVehiclesResponsesIntoDb(dbS, chunk, t); err != nil {
 			log.WithError(err).Error("InsertCNRGetVehiclesResponsesIntoDb")
 		}
-		log.Infof("Inserted %d vehicles", len(chunk))
+
+		var cnt int
+		for _, c := range chunk {
+			cnt += len(c.CNRGetVehiclesResult.Sanitized)
+		}
+		log.Infof("Inserted %d vehicles", cnt)
 		return
 	}
 	log.Warn("Skip inserting zero-length data chunk")
