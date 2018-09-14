@@ -40,3 +40,7 @@
 [[constraint]]
   name = "github.com/gocraft/dbr"
   version = "2.2.0"
+
+[[constraint]]
+  name = "github.com/lib/pq"
+  version = "1.0.0"

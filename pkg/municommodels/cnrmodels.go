@@ -26,7 +26,7 @@ type CNRGetVehicles struct {
 	// It goes like this:
 	// s:  some kind of token
 	// r:  "linie"
-	// v:  "war_trasy" ~ "warunki trasy"
+	// v:  "war_trasy" ~ "wariant trasy"
 	// d:  "kierunki"
 	// nb: "nb" ~ numer boczny"
 	// tp: "typy"
