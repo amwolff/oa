@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/amwolff/oa/pkg/common"
 	"github.com/amwolff/oa/pkg/dataharvest"
 	"github.com/amwolff/oa/pkg/municommodels"
 	"github.com/davecgh/go-spew/spew"
@@ -79,10 +80,6 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	}
 
 	return
-}
-
-func getDsn(user, pass, host string, port int, name string) string {
-	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", user, pass, host, port, name)
 }
 
 func calibrate(client *municommodels.WebServiceClient, log logrus.FieldLogger,
@@ -204,7 +201,7 @@ func main() {
 	client := municommodels.NewWebServiceClient(log, cfg.ClientName, cfg.ClientUA, cfg.ClientURL)
 	sessionCookies := []http.Cookie{{Name: "ASP.NET_SessionId", Value: "m2yxf41efvby2tj4z5m1esiy"}} // TODO(amw): make it configurable
 
-	dsn := getDsn(cfg.DbUser, cfg.DbPass, cfg.DbHost, cfg.DbPort, cfg.DbName)
+	dsn := common.GetDsn(cfg.DbUser, cfg.DbPass, cfg.DbHost, cfg.DbPort, cfg.DbName)
 	log.Debugf("DSN: %s", dsn)
 
 	dbConn, err := dbr.Open("postgres", dsn, &dbr.NullEventReceiver{})
