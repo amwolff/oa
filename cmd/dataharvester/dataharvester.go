@@ -218,7 +218,7 @@ func main() {
 	log.Info("Initialization completed")
 	routes := &municommodels.GetRouteAndVariantsResponse{}
 	for {
-		ctx, canc := context.WithTimeout(context.Background(), (5 * time.Second))
+		ctx, canc := context.WithTimeout(context.Background(), time.Second)
 		routes, err = client.CallGetRouteAndVariants(ctx, sessionCookies, municommodels.GetRouteAndVariants{})
 		if err != nil {
 			// canc()

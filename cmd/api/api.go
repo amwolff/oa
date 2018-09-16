@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/NYTimes/gziphandler"
 	"github.com/amwolff/oa/pkg/common"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/fsnotify/fsnotify"
@@ -24,6 +25,8 @@ type config struct {
 	DbUser string
 	DbPass string
 
+	Addr string
+
 	LogLevel    string
 	LogDir      string
 	ForceColors bool
@@ -40,6 +43,8 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	pflag.String("dbName", "oadb", "Database name")
 	pflag.String("dbUser", "data_service", "Database user")
 	pflag.String("dbPass", "data_service", "Database password")
+
+	pflag.String("addr", ":8080", "Port to listen at")
 
 	pflag.String("loglevel", "debug", "Logging level")
 	pflag.String("logDir", "/tmp", "Logs directory")
@@ -82,10 +87,10 @@ type vehicleResponse struct {
 	VehicleType     string  `json:"vehicle_type"     db:"typ_pojazdu"`
 	Route           string  `json:"route"            db:"numer_lini"`
 	TripID          int     `json:"trip_id"          db:"id_kursu"`
-	Latitude        float64 `json:"lat"              db:"szerokosc"`
-	Longitude       float64 `json:"lon"              db:"dlugosc"`
-	LastLatitude    float64 `json:"last_lat"         db:"prev_szerokosc"`
-	LastLongitude   float64 `json:"last_lon"         db:"prev_dlugosc"`
+	Latitude        float64 `json:"latitude"         db:"szerokosc"`
+	Longitude       float64 `json:"longitude"        db:"dlugosc"`
+	LastLatitude    float64 `json:"last_latitude"    db:"prev_szerokosc"`
+	LastLongitude   float64 `json:"last_longitude"   db:"prev_dlugosc"`
 	Variance        int     `json:"variance"         db:"odchylenie"`
 	Description     string  `json:"description"      db:"opis_tabl"`
 	NextRoute       string  `json:"next_route"       db:"nast_num_lini"`
@@ -96,8 +101,8 @@ type vehicleResponse struct {
 }
 
 func endpointVehiclesData(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
-	// This database call might be WAY more optimized, but I'm leaving this the
-	// way it is since I don't anticipate 10k calls /s kind of traffic.
+	// The database call might be WAY more optimized, but I'm leaving this the
+	// way it is since we don't anticipate 10k calls /s kind of traffic.
 	q := dbS.
 		Select(
 			"nb",
@@ -121,12 +126,17 @@ func endpointVehiclesData(dbS dbr.SessionRunner, log logrus.FieldLogger) http.Ha
 		OrderBy("ts")
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		var resp []vehicleResponse
 		if err := q.LoadOne(&resp); err != nil {
+			http.Error(w, "", http.StatusServiceUnavailable)
 			log.WithError(err).WithField("func", "LoadOne").Error("Cannot execute query")
+			return
 		}
 		if err := json.NewEncoder(w).Encode(&resp); err != nil {
-			log.WithError(err).WithField("func", "Encode").Error("Cannot encode query")
+			http.Error(w, "", http.StatusServiceUnavailable)
+			log.WithError(err).WithField("func", "Encode").Error("Cannot encode fetched")
+			return
 		}
 	}
 }
@@ -166,9 +176,17 @@ func main() {
 	// 	log.WithError(err).Fatal("Cannot parse location")
 	// }
 
+	mux := http.NewServeMux()
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
+	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) { return })
+	mux.Handle("/", gziphandler.GzipHandler(endpointVehiclesData(dbSess, log)))
+
+	srv := http.Server{
+		Addr:    cfg.Addr,
+		Handler: mux,
+	}
 	log.Info("Initialization completed")
 
-	log.Info("Begin listening on port 8085")
-	http.HandleFunc("/", endpointVehiclesData(dbSess, log))
-	http.ListenAndServe(":8080", nil)
+	log.Infof("Begin listening on port %s", srv.Addr)
+	log.Error(srv.ListenAndServe())
 }
