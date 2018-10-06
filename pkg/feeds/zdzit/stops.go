@@ -4,129 +4,96 @@ import (
 	"bytes"
 	"encoding/csv"
 	"fmt"
+	"github.com/gocarina/gocsv"
 	"github.com/jlaffaye/ftp"
+	"io"
+	"sort"
 	"strconv"
 	"strings"
-	"time"
 )
 
-type Stop struct {
-	Number     string
-	Name       string
-	StreetName string
-	Latitude   float64
-	Longitude  float64
+type BusStop struct {
+	Number		string
+	Name       	string
+	StreetName 	string
+	GetLatLong	struct {
+		Unsanitized 	string
+		Latitude 		float64
+		Longitude 		float64
+	}
 }
 
-var BusStops []Stop
-var UploadTime time.Time
+func GetLatestFile(url string) (*ftp.Response, error) {
 
-
-func ReadCSVFromFTP(url string) ([][]string, error) {
-
-	conn, err := ftp.Dial(url)
+	conn, err := ftp.Connect(url)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 	defer conn.Quit()
 
 	if err := conn.Login("anonymous", "anonymous"); err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
-	// LOOKING FOR LATEST CSV FILE
-
-	timeNow := time.Now()
-	timeNow = timeNow.UTC()
-	offset := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
-	min := timeNow.Sub(offset)
-	var NewestCSV string
-
+	var files []string
 	entries, _ := conn.List("")
 
 	for _, entry := range entries {
-		date := entry.Time
-		k := timeNow.Sub(date)
-
-		if k < min {
-			min = k
-			if entry.Name[0] == 'g' {
-				NewestCSV = entry.Name
-				UploadTime = entry.Time
-			}
-		}
+		date := entry.Name
+		files = append(files, date)
 	}
 
-	// READING DATA FROM CSV
+	sort.Strings(files)
 
-	data, err := conn.Retr(NewestCSV)
+	data, err := conn.Retr(files[len(files)-1])
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	buf := new(bytes.Buffer)
 	data.Read(buf.Bytes())
 
-	defer data.Close()
+	return data, nil
+}
 
-	r := csv.NewReader(data)
-	r.Comma = ';'
+func ParseBusStop(url string) ([]BusStop, error) {
 
-	file, err := r.ReadAll()
+	var busStops []BusStop
+
+	data, err := GetLatestFile(url)
 	if err != nil {
+		return nil, err
+	}
+
+	gocsv.SetCSVReader(func(in io.Reader) gocsv.CSVReader {
+		r := csv.NewReader(in)
+		r.Comma = ';'
+		return r
+	})
+
+	if err := gocsv.UnmarshalWithoutHeaders(data, &busStops); err != nil {
 		fmt.Println(err)
 	}
 
-	return file, nil
-}
+	for i, stop := range busStops {
+		splittedLatLong := strings.Split(stop.GetLatLong.Unsanitized, ",")
 
-func ParseData(data [][]string)  error {
-
-	for _, line := range data {
-
-		splittedCords := strings.Split(line[3], ",")
-
-		f1, err := strconv.ParseFloat(splittedCords[0], 64)
+		f1, err := strconv.ParseFloat(splittedLatLong[0], 64)
 		if err != nil {
 			f1 = 0
 		}
 
-		splittedCords = append(splittedCords, "")
+		splittedLatLong = append(splittedLatLong, "")
 
-		f2, err := strconv.ParseFloat(splittedCords[1], 64)
+		f2, err := strconv.ParseFloat(splittedLatLong[1], 64)
 		if err != nil {
 			f2 = 0
 		}
 
-		bs := Stop{
-			Number:     line[0],
-			Name:       line[1],
-			StreetName: line[2],
-			Latitude:   f1,
-			Longitude:  f2,
-		}
+		busStops[i].GetLatLong.Latitude		= f1
+		busStops[i].GetLatLong.Longitude	= f2
 
-		BusStops = append(BusStops, bs)
 	}
 
-	return nil
+	return busStops[1:], nil 	// we need to ignore names of the columns
 }
-
-func GetBusStops() []Stop {
-
-	url := "helios.zdzit.olsztyn.eu:21"
-	file, err := ReadCSVFromFTP(url)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	ParseData(file)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return BusStops
-}
-
-
-
