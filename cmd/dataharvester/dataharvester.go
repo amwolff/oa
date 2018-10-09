@@ -199,7 +199,7 @@ func main() {
 	log.Infof("Loaded config: %s", spew.Sdump(cfg))
 
 	client := municommodels.NewWebServiceClient(log, cfg.ClientName, cfg.ClientUA, cfg.ClientURL)
-	sessionCookies := []http.Cookie{{Name: "ASP.NET_SessionId", Value: "m2yxf41efvby2tj4z5m1esiy"}} // TODO(amw): make it configurable
+	sessionCookies := []http.Cookie{{Name: "ASP.NET_SessionId", Value: "usziyhl5fh3ypxxyf5i0aavn"}} // TODO(amw): make it configurable
 
 	dsn := common.GetDsn(cfg.DbUser, cfg.DbPass, cfg.DbHost, cfg.DbPort, cfg.DbName)
 	log.Debugf("DSN: %s", dsn)
@@ -241,6 +241,10 @@ func main() {
 			for _, r := range routes.GetRouteAndVariantsResult.L {
 				now = time.Now().In(tz)
 
+				if durationPool <= 0 {
+					break
+				}
+
 				payload := municommodels.CNRGetVehicles{
 					R: r.Number,
 					D: r.Direction,
@@ -255,6 +259,7 @@ func main() {
 						// TODO(amw): rescue data
 					}
 					log.WithError(err).Error("CallCNRGetVehicles")
+					durationPool -= time.Since(now)
 					continue
 				}
 				canc()
