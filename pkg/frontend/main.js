@@ -14,7 +14,40 @@ function onLocationFound(e) {
 oamap.on('locationfound', onLocationFound);
 oamap.locate({setView: false, maxZoom: 16});
 
-let vehicleLayerGroup = L.layerGroup().addTo(oamap);
+let availableRoutes;
+let vehiclesLayerGroups = [];
+
+function InternalVehicle(rawVehicle) {
+    this.stall = (rawVehicle.route.length === 0);
+
+    if (this.stall) {
+        this.route = rawVehicle.next_route;
+        this.trip_id = rawVehicle.next_trip_id;
+        this.description = rawVehicle.next_description;
+        this.vector = 0;
+    } else {
+        this.route = rawVehicle.route;
+        this.trip_id = rawVehicle.trip_id;
+        this.description = rawVehicle.description;
+        this.vector = 180 + rawVehicle.vector;
+    }
+
+    this.latitude = rawVehicle.latitude;
+    this.longitude = rawVehicle.longitude;
+    this.variance = rawVehicle.variance;
+
+    this.isStall = function () {
+        return this.stall;
+    };
+}
+
+function serializeVehicles(rawVehicles) {
+    let serialized = [];
+    rawVehicles.forEach(v => {
+        serialized.push(new InternalVehicle(v));
+    });
+    return serialized;
+}
 
 function getVehicleIcon(internalVehicle) {
     let iconHtml = '<svg width="26" height="26">\n' +
@@ -88,49 +121,17 @@ function getVehicleIcon(internalVehicle) {
     return iconHtml;
 }
 
-function InternalVehicle(rawVehicle) {
-    this.stall = (rawVehicle.route.length === 0);
-
-    if (this.stall) {
-        this.route = rawVehicle.next_route;
-        this.trip_id = rawVehicle.next_trip_id;
-        this.description = rawVehicle.next_description;
-        this.vector = 0;
-    } else {
-        this.route = rawVehicle.route;
-        this.trip_id = rawVehicle.trip_id;
-        this.description = rawVehicle.description;
-        this.vector = 180 + rawVehicle.vector;
-    }
-
-    this.latitude = rawVehicle.latitude;
-    this.longitude = rawVehicle.longitude;
-    this.variance = rawVehicle.variance;
-
-    this.isStall = function () {
-        return this.stall;
-    };
-}
-
-function serializeVehicles(rawVehicles) {
-    let internalVehicles = [];
-    rawVehicles.forEach(v => {
-        internalVehicles.push(new InternalVehicle(v));
-    });
-    return internalVehicles;
-}
-
-function insertOnMap(rawVehicles) {
-    let serializedVehicles = [];
-    serializeVehicles(rawVehicles).forEach(v => {
+function markerizeVehicles(internalVehicles) {
+    let markerized = [];
+    internalVehicles.forEach(v => {
         let opts = {
             icon: L.divIcon({
                 html: getVehicleIcon(v),
                 className: "outerVehicleIcon",
             }),
             alt: v.route,
-            title: v.description,
             riseOnHover: true,
+            title: v.description,
         };
 
         let popupContent =
@@ -140,23 +141,38 @@ function insertOnMap(rawVehicles) {
         if (v.isStall()) {
             popupContent = popupContent.concat("Czas do odjazdu: " + v.variance + "s");
         } else {
-            popupContent = popupContent.concat("Odchylenie: " + v.variance + "s");
+            popupContent = popupContent.concat("Opóźnienie: " + (-1 * v.variance) + "s");
         }
 
-        serializedVehicles.push(L.marker([v.latitude, v.longitude], opts).bindPopup(popupContent));
+        markerized.push(L.marker([v.latitude, v.longitude], opts).bindPopup(popupContent));
     });
-    vehicleLayerGroup.clearLayers().addLayer(L.layerGroup(serializedVehicles));
+    return markerized;
 }
 
-function fireNextRefresh(lastModifiedTime) {
-    let refreshAfter = 22000 - (Date.now() - lastModifiedTime);
+function insertOnMap(rawVehicles) {
+    let serializedVehicles = serializeVehicles(rawVehicles);
+    let markerizedVehicles = markerizeVehicles(serializedVehicles);
+
+    availableRoutes.forEach(r => {
+        vehiclesLayerGroups[r.route].clearLayers();
+        for (let i = 0; i < serializedVehicles.length; i++) {
+            if (serializedVehicles[i].route === r.route) {
+                vehiclesLayerGroups[r.route].addLayer(markerizedVehicles[i]);
+            }
+        }
+    });
+}
+
+
+function fireNextRefresh(lastModifiedDate) {
+    let refreshAfter = 22000 - (Date.now() - lastModifiedDate);
     if (refreshAfter < 0) {
         if (refreshAfter > -21000) {
             setTimeout(refreshMap, 1000);
         } else {
             console.log("Refreshing the map has been stalled. " +
                 "This can happen when there's a problem with the data source. " +
-                "Please reload the page to start the refreshing again.")
+                "Reload the page to start the refreshing again.")
         }
     } else {
         setTimeout(refreshMap, refreshAfter);
@@ -164,15 +180,32 @@ function fireNextRefresh(lastModifiedTime) {
 }
 
 function refreshMap() {
-    fetch('http://localhost:8080')
+    fetch('http://localhost:8080/VehiclesData')
         .then(function (response) {
             let lastModified = new Date(response.headers.get("Last-Modified"));
             fireNextRefresh(lastModified);
             return response.json();
         })
-        .then(function (responseData) {
-            insertOnMap(JSON.parse(JSON.stringify(responseData)));
+        .then(function (responseJSON) {
+            insertOnMap(JSON.parse(JSON.stringify(responseJSON)));
         });
 }
 
-refreshMap();
+function initializeMap() {
+    fetch('http://localhost:8080/AvailableRoutes')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (responseJSON) {
+            availableRoutes = JSON.parse(JSON.stringify(responseJSON));
+
+            availableRoutes.forEach(r => {
+                vehiclesLayerGroups[r.route] = new L.LayerGroup();
+            });
+            L.control.layers(null, vehiclesLayerGroups).addTo(oamap).expand();
+
+            refreshMap();
+        });
+}
+
+initializeMap();

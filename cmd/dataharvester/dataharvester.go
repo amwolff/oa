@@ -133,7 +133,7 @@ func insertRoutesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
 		if err := dataharvest.InsertGetRouteAndVariantsResponseIntoDb(dbS, chunk, t); err != nil {
 			log.WithError(err).Fatal("InsertGetRouteAndVariantsResponseIntoDb")
 		}
-		log.Infof("Inserted %d vehicles", len(chunk.GetRouteAndVariantsResult.L))
+		log.WithField("time", t).Infof("Inserted %d vehicles", len(chunk.GetRouteAndVariantsResult.L))
 		return
 	}
 	log.Error("Zero-length data chunk")
@@ -153,7 +153,7 @@ func insertVehiclesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
 		for _, c := range chunk {
 			cnt += len(c.CNRGetVehiclesResult.Sanitized)
 		}
-		log.Infof("Inserted %d vehicles", cnt)
+		log.WithField("time", t).Infof("Inserted %d vehicles", cnt)
 		return
 	}
 	log.Warn("Skip inserting zero-length data chunk")

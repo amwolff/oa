@@ -77,7 +77,51 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	return
 }
 
-type vehicleResponse struct {
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified#Syntax
+const lastModifiedTimeFormat = "Mon, 02 Jan 2006 15:04:05 GMT"
+
+type availableRoutesResponse struct {
+	Timestamp time.Time `json:"-"     db:"ts"`
+	Route     string    `json:"route" db:"number"`
+}
+
+func endpointAvailableRoutes(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
+	log = log.WithField("handler", "AvailableRoutes")
+	q := dbS.
+		Select(
+			"ts",
+			"number",
+		).
+		Distinct().
+		From("olsztyn_static.routes").
+		Where("ts = (SELECT ts FROM olsztyn_static.routes ORDER BY id DESC LIMIT 1)").
+		OrderBy("number")
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:63342")
+		var resp []availableRoutesResponse
+		if err := q.LoadOne(&resp); err != nil {
+			http.Error(w, "", http.StatusServiceUnavailable)
+			log.WithError(err).WithField("func", "LoadOne").Error("Cannot execute query")
+			return
+		}
+		w.Header().Set("Last-Modified", resp[0].Timestamp.UTC().Format(lastModifiedTimeFormat))
+		if err := json.NewEncoder(w).Encode(&resp); err != nil {
+			http.Error(w, "", http.StatusServiceUnavailable)
+			log.WithError(err).WithField("func", "Encode").Error("Cannot encode fetched")
+			return
+		}
+	}
+}
+
+type availableBusStopsResponse struct{}
+
+func endpointBusStops(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {}
+}
+
+type vehiclesDataResponse struct {
 	Timestamp       time.Time `json:"-"                db:"ts"`
 	VehicleID       int       `json:"vehicle_id"       db:"nb"`
 	VehicleType     string    `json:"vehicle_type"     db:"typ_pojazdu"`
@@ -97,6 +141,7 @@ type vehicleResponse struct {
 }
 
 func endpointVehiclesData(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
+	log = log.WithField("handler", "VehiclesData")
 	// The database call might be WAY more optimized, but I'm leaving this the
 	// way it is since we don't anticipate 10k calls /s kind of traffic.
 	q := dbS.
@@ -120,23 +165,18 @@ func endpointVehiclesData(dbS dbr.SessionRunner, log logrus.FieldLogger) http.Ha
 		).
 		From("olsztyn_live.vehicles").
 		Where("ts = (SELECT ts FROM olsztyn_live.vehicles ORDER BY id DESC LIMIT 1)").
-		OrderBy("id")
-
-	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified#Syntax
-	const lastModifiedTimeFormat = "Mon, 02 Jan 2006 15:04:05 GMT"
+		OrderBy("numer_lini")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:63342")
-		var resp []vehicleResponse
+		var resp []vehiclesDataResponse
 		if err := q.LoadOne(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
 			log.WithError(err).WithField("func", "LoadOne").Error("Cannot execute query")
 			return
 		}
-		if len(resp) > 0 {
-			w.Header().Set("Last-Modified", resp[0].Timestamp.UTC().Format(lastModifiedTimeFormat))
-		}
+		w.Header().Set("Last-Modified", resp[0].Timestamp.UTC().Format(lastModifiedTimeFormat))
 		if err := json.NewEncoder(w).Encode(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
 			log.WithError(err).WithField("func", "Encode").Error("Cannot encode fetched")
@@ -167,7 +207,7 @@ func main() {
 		log.SetLevel(logrus.DebugLevel)
 	}
 
-	log.WithFields(initFields).Info("data API service greeting")
+	log.WithFields(initFields).Info("Data API service greeting")
 
 	cfg := loadConfig(log)
 	log.Infof("Loaded config: %s", spew.Sdump(cfg))
@@ -187,9 +227,11 @@ func main() {
 	// }
 
 	mux := http.NewServeMux()
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.Error(w, "", http.StatusBadRequest) })
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
 	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) { return })
-	mux.Handle("/", gziphandler.GzipHandler(endpointVehiclesData(dbSess, log)))
+	mux.Handle("/AvailableRoutes", gziphandler.GzipHandler(endpointAvailableRoutes(dbSess, log)))
+	mux.Handle("/VehiclesData", gziphandler.GzipHandler(endpointVehiclesData(dbSess, log)))
 
 	srv := http.Server{
 		Addr:    cfg.Addr,
@@ -197,6 +239,6 @@ func main() {
 	}
 	log.Info("Initialization completed")
 
-	log.Infof("Begin listening on port %s", srv.Addr)
+	log.Infof("Begin listening on %s", srv.Addr)
 	log.Error(srv.ListenAndServe())
 }
