@@ -13,8 +13,10 @@ import (
 	"github.com/amwolff/oa/pkg/municommodels"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/fsnotify/fsnotify"
+	"github.com/getsentry/raven-go"
 	"github.com/gocraft/dbr"
 	_ "github.com/lib/pq"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -36,7 +38,8 @@ type config struct {
 	LogDir      string
 	ForceColors bool
 
-	SentrySecret string
+	SentryDSN         string
+	SentryEnvironment string
 }
 
 func loadConfig(log logrus.FieldLogger) (cfg config) {
@@ -58,7 +61,8 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	pflag.String("logDir", "/tmp", "Logs directory")
 	pflag.Bool("forceColors", true, "Force colors when printing to stdout")
 
-	pflag.String("sentrySecret", "", "Secret string for Raven")
+	pflag.String("sentryDSN", "", "Secret string for Raven")
+	pflag.String("sentryEnvironment", "", "")
 
 	configFile := pflag.String("config", "", "A config file to load")
 
@@ -69,7 +73,7 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 		viper.AddConfigPath(*configFile)
 		viper.WatchConfig()
 		viper.OnConfigChange(func(e fsnotify.Event) {
-			// TODO(amw): maybe unmarshal 2nd time
+			// TODO(amwolff): maybe unmarshal 2nd time
 			log.Warnf("Config file changed: %s", e.Name)
 		})
 		if err := viper.ReadInConfig(); err != nil {
@@ -130,15 +134,19 @@ func insertRoutesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
 	chunk *municommodels.GetRouteAndVariantsResponse, t time.Time) {
 
 	log = log.WithField("func", "insertRoutesChunk")
+	errTag := map[string]string{"func": "insertRoutesChunk"}
 
 	if len(chunk.GetRouteAndVariantsResult.L) > 0 {
 		if err := dataharvest.InsertGetRouteAndVariantsResponseIntoDb(dbS, chunk, t); err != nil {
+			raven.CaptureErrorAndWait(err, errTag)
 			log.WithError(err).Fatal("InsertGetRouteAndVariantsResponseIntoDb")
 		}
 		log.WithField("ts", t).Infof("Inserted %d routes", len(chunk.GetRouteAndVariantsResult.L))
 		return
 	}
-	log.Error("Zero-length data chunk")
+	err := errors.New("Zero-length data chunk")
+	raven.CaptureErrorAndWait(err, errTag)
+	log.Error(err)
 }
 
 func insertVehiclesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
@@ -148,7 +156,9 @@ func insertVehiclesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
 
 	if len(chunk) > 0 {
 		if err := dataharvest.InsertCNRGetVehiclesResponsesIntoDb(dbS, chunk, t); err != nil {
+			raven.CaptureErrorAndWait(err, map[string]string{"func": "insertVehiclesChunk"})
 			log.WithError(err).Error("InsertCNRGetVehiclesResponsesIntoDb")
+			return
 		}
 
 		var cnt int
@@ -200,6 +210,10 @@ func main() {
 	cfg := loadConfig(log)
 	log.Infof("Loaded config: %s", spew.Sdump(cfg))
 
+	raven.SetDSN(cfg.SentryDSN)
+	raven.SetRelease(BuildTimeCommitMD5)
+	raven.SetEnvironment(cfg.SentryEnvironment)
+
 	client := municommodels.NewWebServiceClient(log, cfg.ClientName, cfg.ClientUA, cfg.ClientURL)
 	sessionCookies := []http.Cookie{{Name: "ASP.NET_SessionId", Value: cfg.ClientCookie}}
 
@@ -224,6 +238,7 @@ func main() {
 		routes, err = client.CallGetRouteAndVariants(ctx, sessionCookies, municommodels.GetRouteAndVariants{})
 		if err != nil {
 			// canc()
+			raven.CaptureErrorAndWait(err, map[string]string{"call-to": "CallGetRouteAndVariants"})
 			log.WithError(err).Fatal("CallGetRouteAndVariants")
 		}
 		canc()
@@ -233,6 +248,7 @@ func main() {
 		insertRoutesChunk(dbSess, log, routes, now)
 
 		if ok, err := calibrate(client, log, sessionCookies, routes); !ok {
+			raven.CaptureMessageAndWait("calibration failed", nil)
 			log.WithError(err).Fatal("Calibration unsuccessful")
 		}
 		log.Info("Calibration completed")
@@ -249,6 +265,7 @@ func main() {
 
 				payload := municommodels.CNRGetVehicles{
 					R: r.Number,
+					// TODO(amwolff): we should probably also query by 'V'
 					D: r.Direction,
 				}
 
@@ -258,8 +275,9 @@ func main() {
 					canc()
 					if vehicles != nil {
 						log.WithError(err).Warn("Results' sanitation unsuccessful")
-						// TODO(amw): rescue data
+						// TODO(amwolff): rescue data
 					}
+					raven.CaptureError(err, map[string]string{"call-to": "CallCNRGetVehicles"})
 					log.WithError(err).Error("CallCNRGetVehicles")
 					durationPool -= time.Since(now)
 					continue
