@@ -47,7 +47,7 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 
 	pflag.String("addr", ":8080", "Port to listen at")
 
-	pflag.String("loglevel", "debug", "Logging level")
+	pflag.String("logLevel", "debug", "Logging level")
 	pflag.String("logDir", "/tmp", "Logs directory")
 	pflag.Bool("forceColors", true, "Force colors when printing to stdout")
 
@@ -80,12 +80,12 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified#Syntax
 const lastModifiedTimeFormat = "Mon, 02 Jan 2006 15:04:05 GMT"
 
-type availableRoutesResponse struct {
+type routesResponse struct {
 	Timestamp time.Time `json:"-"     db:"ts"`
 	Route     string    `json:"route" db:"number"`
 }
 
-func endpointAvailableRoutes(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
+func endpointRoutes(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
 	log = log.WithField("handler", "AvailableRoutes")
 	q := dbS.
 		Select(
@@ -99,8 +99,8 @@ func endpointAvailableRoutes(dbS dbr.SessionRunner, log logrus.FieldLogger) http
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:63342")
-		var resp []availableRoutesResponse
+		w.Header().Set("Access-Control-Allow-Origin", "http://datainq-cdn.com:8080")
+		var resp []routesResponse
 		if err := q.LoadOne(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
 			log.WithError(err).WithField("func", "LoadOne").Error("Cannot execute query")
@@ -115,13 +115,13 @@ func endpointAvailableRoutes(dbS dbr.SessionRunner, log logrus.FieldLogger) http
 	}
 }
 
-type availableBusStopsResponse struct{}
+type busStopsResponse struct{}
 
 func endpointBusStops(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {}
 }
 
-type vehiclesDataResponse struct {
+type vehiclesResponse struct {
 	Timestamp       time.Time `json:"-"                db:"ts"`
 	VehicleID       int       `json:"vehicle_id"       db:"nb"`
 	VehicleType     string    `json:"vehicle_type"     db:"typ_pojazdu"`
@@ -140,7 +140,7 @@ type vehiclesDataResponse struct {
 	Vector          float64   `json:"vector"           db:"wektor"`
 }
 
-func endpointVehiclesData(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
+func endpointVehicles(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
 	log = log.WithField("handler", "VehiclesData")
 	// The database call might be WAY more optimized, but I'm leaving this the
 	// way it is since we don't anticipate 10k calls /s kind of traffic.
@@ -169,8 +169,8 @@ func endpointVehiclesData(dbS dbr.SessionRunner, log logrus.FieldLogger) http.Ha
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:63342")
-		var resp []vehiclesDataResponse
+		w.Header().Set("Access-Control-Allow-Origin", "http://datainq-cdn.com:8080")
+		var resp []vehiclesResponse
 		if err := q.LoadOne(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
 			log.WithError(err).WithField("func", "LoadOne").Error("Cannot execute query")
@@ -188,7 +188,7 @@ func endpointVehiclesData(dbS dbr.SessionRunner, log logrus.FieldLogger) http.Ha
 var (
 	BuildTimeCommitMD5 string
 	BuildTimeTime      string
-	BuildTimeIsDev     = "true"
+	BuildTimeIsDev     = "false"
 )
 
 func main() {
@@ -230,8 +230,8 @@ func main() {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.Error(w, "", http.StatusBadRequest) })
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
 	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) { return })
-	mux.Handle("/AvailableRoutes", gziphandler.GzipHandler(endpointAvailableRoutes(dbSess, log)))
-	mux.Handle("/VehiclesData", gziphandler.GzipHandler(endpointVehiclesData(dbSess, log)))
+	mux.Handle("/Routes", gziphandler.GzipHandler(endpointRoutes(dbSess, log)))
+	mux.Handle("/Vehicles", gziphandler.GzipHandler(endpointVehicles(dbSess, log)))
 
 	srv := http.Server{
 		Addr:    cfg.Addr,

@@ -21,9 +21,10 @@ import (
 )
 
 type config struct {
-	ClientName string
-	ClientUA   string
-	ClientURL  string
+	ClientName   string
+	ClientUA     string
+	ClientURL    string
+	ClientCookie string
 
 	DbHost string
 	DbPort int
@@ -45,6 +46,7 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	pflag.String("clientName", "dataharvester", "Web Service Client name")
 	pflag.String("clientUA", "oaservice/1.0 (+https://ssdip.bip.gov.pl/artykuly/art-61-konstytucji-rp_75.html)", "Web Service Client UAString")
 	pflag.String("clientURL", "http://sip.zdzit.olsztyn.eu/PublicService.asmx", "Web Service URL")
+	pflag.String("clientCookie", "usziyhl5fh3ypxxyf5i0aavn", "ASP.NET_SessionId cookie")
 
 	pflag.String("dbHost", "localhost", "Database host")
 	pflag.Int("dbPort", 5432, "Database port")
@@ -52,7 +54,7 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	pflag.String("dbUser", "data_service", "Database user")
 	pflag.String("dbPass", "data_service", "Database password")
 
-	pflag.String("loglevel", "debug", "Logging level")
+	pflag.String("logLevel", "debug", "Logging level")
 	pflag.String("logDir", "/tmp", "Logs directory")
 	pflag.Bool("forceColors", true, "Force colors when printing to stdout")
 
@@ -133,7 +135,7 @@ func insertRoutesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
 		if err := dataharvest.InsertGetRouteAndVariantsResponseIntoDb(dbS, chunk, t); err != nil {
 			log.WithError(err).Fatal("InsertGetRouteAndVariantsResponseIntoDb")
 		}
-		log.WithField("time", t).Infof("Inserted %d vehicles", len(chunk.GetRouteAndVariantsResult.L))
+		log.WithField("ts", t).Infof("Inserted %d routes", len(chunk.GetRouteAndVariantsResult.L))
 		return
 	}
 	log.Error("Zero-length data chunk")
@@ -153,7 +155,7 @@ func insertVehiclesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
 		for _, c := range chunk {
 			cnt += len(c.CNRGetVehiclesResult.Sanitized)
 		}
-		log.WithField("time", t).Infof("Inserted %d vehicles", cnt)
+		log.WithField("ts", t).Infof("Inserted %d vehicles", cnt)
 		return
 	}
 	log.Warn("Skip inserting zero-length data chunk")
@@ -199,7 +201,7 @@ func main() {
 	log.Infof("Loaded config: %s", spew.Sdump(cfg))
 
 	client := municommodels.NewWebServiceClient(log, cfg.ClientName, cfg.ClientUA, cfg.ClientURL)
-	sessionCookies := []http.Cookie{{Name: "ASP.NET_SessionId", Value: "usziyhl5fh3ypxxyf5i0aavn"}} // TODO(amw): make it configurable
+	sessionCookies := []http.Cookie{{Name: "ASP.NET_SessionId", Value: cfg.ClientCookie}}
 
 	dsn := common.GetDsn(cfg.DbUser, cfg.DbPass, cfg.DbHost, cfg.DbPort, cfg.DbName)
 	log.Debugf("DSN: %s", dsn)

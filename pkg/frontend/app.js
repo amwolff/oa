@@ -32,6 +32,7 @@ function InternalVehicle(rawVehicle) {
         this.vector = 180 + rawVehicle.vector;
     }
 
+
     this.latitude = rawVehicle.latitude;
     this.longitude = rawVehicle.longitude;
     this.variance = rawVehicle.variance;
@@ -39,6 +40,10 @@ function InternalVehicle(rawVehicle) {
     this.isStall = function () {
         return this.stall;
     };
+
+    this.getMarker = function () {
+        // TODO(amw): that would be better than markerizing already internal data type
+    }
 }
 
 function serializeVehicles(rawVehicles) {
@@ -50,9 +55,9 @@ function serializeVehicles(rawVehicles) {
 }
 
 function getVehicleIcon(internalVehicle) {
-    let iconHtml = '<svg width="26" height="26">\n' +
-        '<path transform="rotate({{ROTATE}} 13 19)" fill="{{FILL}}" stroke="{{STROKE}}" stroke-width="2"\n' +
-        'stroke-dasharray="{{STROKE-DASHARRAY}}" d="\n' +
+    let iconTemplate = '<svg width="26" height="26">\n' +
+        '<path transform="rotate({rotate} 13 19)" fill="{fill}" stroke="{stroke}" stroke-width="2"\n' +
+        'stroke-dasharray="{stroke_dasharray}" d="\n' +
         'M26\n' +
         '19c0-2.2-0.6-4.4-1.6-6.2C22.2\n' +
         '8.8\n' +
@@ -77,7 +82,7 @@ function getVehicleIcon(internalVehicle) {
         '19 Z"/>\n' +
         '<g>\n' +
         '<text x="13" y="19" font-family="sans-serif" font-size="12px" fill="white"\n' +
-        'text-anchor="middle" alignment-baseline="central">{{ROUTE}}\n' +
+        'text-anchor="middle" alignment-baseline="central">{route}\n' +
         '</text>\n' +
         '</g>\n' +
         'Sorry, your browser does not support inline SVG.\n' +
@@ -112,13 +117,15 @@ function getVehicleIcon(internalVehicle) {
         return '0,0';
     };
 
-    iconHtml = iconHtml.replace("{{ROTATE}}", internalVehicle.vector);
-    iconHtml = iconHtml.replace("{{FILL}}", getRouteColor(internalVehicle.route));
-    iconHtml = iconHtml.replace("{{STROKE}}", getIconBorderColor(internalVehicle.variance));
-    iconHtml = iconHtml.replace("{{STROKE-DASHARRAY}}", getIconBorderStyle(internalVehicle));
-    iconHtml = iconHtml.replace("{{ROUTE}}", internalVehicle.route);
+    let iconData = {
+        rotate: internalVehicle.vector,
+        fill: getRouteColor(internalVehicle.route),
+        stroke: getIconBorderColor(internalVehicle.variance),
+        stroke_dasharray: getIconBorderStyle(internalVehicle),
+        route: internalVehicle.route,
+    };
 
-    return iconHtml;
+    return L.Util.template(iconTemplate, iconData);
 }
 
 function markerizeVehicles(internalVehicles) {
@@ -134,17 +141,28 @@ function markerizeVehicles(internalVehicles) {
             title: v.description,
         };
 
-        let popupContent =
-            "<b>Linia nr " + v.route + "</b><br>" +
-            "Numer kursu: " + v.trip_id + "<br>" +
-            "Kierunek: " + v.description + "<br>";
+        let popupTemplate =
+            "<b>Linia nr {route}</b><br>" +
+            "Numer kursu: {trip_id}<br>" +
+            "Kierunek: {description}<br>" +
+            "{state}: {variance}s";
+
+        let popupData = {
+            route: v.route,
+            trip_id: v.trip_id,
+            description: v.description,
+        };
+
+
         if (v.isStall()) {
-            popupContent = popupContent.concat("Czas do odjazdu: " + v.variance + "s");
+            popupData.state = "Czas do odjazdu";
+            popupData.variance = v.variance;
         } else {
-            popupContent = popupContent.concat("Opóźnienie: " + (-1 * v.variance) + "s");
+            popupData.state = "Opóźnienie";
+            popupData.variance = -1 * v.variance;
         }
 
-        markerized.push(L.marker([v.latitude, v.longitude], opts).bindPopup(popupContent));
+        markerized.push(L.marker([v.latitude, v.longitude], opts).bindPopup(L.Util.template(popupTemplate, popupData)));
     });
     return markerized;
 }
