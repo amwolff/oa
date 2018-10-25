@@ -11,6 +11,6 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-deployment/services/api/config.yml
-deployment/services/dataharvester/config.yml
-deployment/services/dirserver/config.yml
+deploy/services/api/config.yml
+deploy/services/dataharvester/config.yml
+deploy/services/dirserver/config.yml

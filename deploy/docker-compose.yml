@@ -8,7 +8,7 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 1
-        window: 120s
+        window: 60s
     ports:
       - '5432:5432'
     networks:
@@ -21,9 +21,8 @@ services:
       mode: global
       restart_policy:
         condition: on-failure
-        delay: 60s
-        max_attempts: 1
-        window: 60s
+        delay: 360s
+        max_attempts: 10
     depends_on:
       - db
     networks:
@@ -31,12 +30,11 @@ services:
   api:
     image: 'amwolff/oa:api_v0.2'
     deploy:
-      replicas: 3
+      replicas: 5
       restart_policy:
         condition: on-failure
         delay: 5s
-        max_attempts: 2
-        window: 5s
+        max_attempts: 5
     depends_on:
       - db
     ports:
@@ -50,8 +48,7 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-        max_attempts: 3
-        window: 5s
+        max_attempts: 5
     ports:
       - '80:80'
     networks:

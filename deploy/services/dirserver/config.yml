@@ -1,0 +1,8 @@
+Addr: ':http'
+ServeFrom: /app/dirserver/
+LogLevel: info
+LogDir: /tmp
+ForceColors: true
+SentryDSN: >-
+  https://ac35b0ae185846a5b85e99d4986d4404:89fc9f553cc4403480a215b4b6a9e06a@sentry.io/1303446
+SentryEnvironment: staging
