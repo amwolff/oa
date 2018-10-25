@@ -12,6 +12,7 @@ import (
 	"github.com/amwolff/oa/pkg/common"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/fsnotify/fsnotify"
+	"github.com/getsentry/raven-go"
 	"github.com/gocraft/dbr"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
@@ -32,7 +33,8 @@ type config struct {
 	LogDir      string
 	ForceColors bool
 
-	SentrySecret string
+	SentryDSN         string
+	SentryEnvironment string
 }
 
 func loadConfig(log logrus.FieldLogger) (cfg config) {
@@ -52,6 +54,7 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	pflag.Bool("forceColors", true, "Force colors when printing to stdout")
 
 	pflag.String("sentrySecret", "", "Secret string for Raven")
+	pflag.String("sentryEnvironment", "", "")
 
 	configFile := pflag.String("config", "", "A config file to load")
 
@@ -59,7 +62,7 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	viper.BindPFlags(pflag.CommandLine)
 
 	if len(*configFile) > 0 {
-		viper.AddConfigPath(*configFile)
+		viper.SetConfigFile(*configFile)
 		viper.WatchConfig()
 		viper.OnConfigChange(func(e fsnotify.Event) {
 			// TODO(amw): maybe unmarshal 2nd time
@@ -97,22 +100,24 @@ func endpointRoutes(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerF
 		Where("ts = (SELECT ts FROM olsztyn_static.routes ORDER BY id DESC LIMIT 1)").
 		OrderBy("number")
 
-	return func(w http.ResponseWriter, r *http.Request) {
+	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "http://68.183.64.110")
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.Header().Set("Access-Control-Allow-Origin", "http://datainq-cdn.com:8080")
 		var resp []routesResponse
 		if err := q.LoadOne(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
+			raven.CaptureErrorAndWait(err, map[string]string{"func": "LoadOne"})
 			log.WithError(err).WithField("func", "LoadOne").Error("Cannot execute query")
 			return
 		}
 		w.Header().Set("Last-Modified", resp[0].Timestamp.UTC().Format(lastModifiedTimeFormat))
 		if err := json.NewEncoder(w).Encode(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
+			raven.CaptureErrorAndWait(err, map[string]string{"func": "Encode"})
 			log.WithError(err).WithField("func", "Encode").Error("Cannot encode fetched")
 			return
 		}
-	}
+	})
 }
 
 type busStopsResponse struct{}
@@ -167,28 +172,30 @@ func endpointVehicles(dbS dbr.SessionRunner, log logrus.FieldLogger) http.Handle
 		Where("ts = (SELECT ts FROM olsztyn_live.vehicles ORDER BY id DESC LIMIT 1)").
 		OrderBy("numer_lini")
 
-	return func(w http.ResponseWriter, r *http.Request) {
+	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "http://68.183.64.110")
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.Header().Set("Access-Control-Allow-Origin", "http://datainq-cdn.com:8080")
 		var resp []vehiclesResponse
 		if err := q.LoadOne(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
+			raven.CaptureErrorAndWait(err, map[string]string{"func": "LoadOne"})
 			log.WithError(err).WithField("func", "LoadOne").Error("Cannot execute query")
 			return
 		}
 		w.Header().Set("Last-Modified", resp[0].Timestamp.UTC().Format(lastModifiedTimeFormat))
 		if err := json.NewEncoder(w).Encode(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
+			raven.CaptureErrorAndWait(err, map[string]string{"func": "Encode"})
 			log.WithError(err).WithField("func", "Encode").Error("Cannot encode fetched")
 			return
 		}
-	}
+	})
 }
 
 var (
 	BuildTimeCommitMD5 string
 	BuildTimeTime      string
-	BuildTimeIsDev     = "false"
+	BuildTimeIsDev     string
 )
 
 func main() {
@@ -207,10 +214,15 @@ func main() {
 		log.SetLevel(logrus.DebugLevel)
 	}
 
-	log.WithFields(initFields).Info("Data API service greeting")
+	log.WithFields(initFields).Info("data API service greeting")
 
 	cfg := loadConfig(log)
 	log.Infof("Loaded config: %s", spew.Sdump(cfg))
+
+	raven.SetDefaultLoggerName("API")
+	raven.SetEnvironment(cfg.SentryEnvironment)
+	raven.SetRelease(BuildTimeCommitMD5)
+	raven.SetDSN(cfg.SentryDSN)
 
 	dsn := common.GetDsn(cfg.DbUser, cfg.DbPass, cfg.DbHost, cfg.DbPort, cfg.DbName)
 	log.Debugf("DSN: %s", dsn)
@@ -219,6 +231,12 @@ func main() {
 	if err != nil {
 		log.WithError(err).Fatal("Cannot connect to database")
 	}
+	dbConn.SetConnMaxLifetime(10 * time.Minute)
+
+	if err := common.WaitForPostgres(dbConn, 10, log); err != nil {
+		log.WithError(err).Fatal("Cannot connect to database")
+	}
+
 	dbSess := dbConn.NewSession(&dbr.NullEventReceiver{})
 
 	// tz, err := time.LoadLocation("Europe/Warsaw")
@@ -240,5 +258,8 @@ func main() {
 	log.Info("Initialization completed")
 
 	log.Infof("Begin listening on %s", srv.Addr)
-	log.Error(srv.ListenAndServe())
+	if err := srv.ListenAndServe(); err != nil {
+		raven.CaptureErrorAndWait(err, nil)
+		log.Error(err)
+	}
 }

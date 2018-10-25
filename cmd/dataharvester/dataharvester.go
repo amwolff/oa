@@ -70,7 +70,7 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	viper.BindPFlags(pflag.CommandLine)
 
 	if len(*configFile) > 0 {
-		viper.AddConfigPath(*configFile)
+		viper.SetConfigFile(*configFile)
 		viper.WatchConfig()
 		viper.OnConfigChange(func(e fsnotify.Event) {
 			// TODO(amwolff): maybe unmarshal 2nd time
@@ -130,12 +130,13 @@ func calibrate(client *municommodels.WebServiceClient, log logrus.FieldLogger,
 	return false, nil
 }
 
-func insertRoutesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
+func insertRoutesChunk(dbC *dbr.Connection, log logrus.FieldLogger,
 	chunk *municommodels.GetRouteAndVariantsResponse, t time.Time) {
 
 	log = log.WithField("func", "insertRoutesChunk")
 	errTag := map[string]string{"func": "insertRoutesChunk"}
 
+	dbS := dbC.NewSession(&dbr.NullEventReceiver{})
 	if len(chunk.GetRouteAndVariantsResult.L) > 0 {
 		if err := dataharvest.InsertGetRouteAndVariantsResponseIntoDb(dbS, chunk, t); err != nil {
 			raven.CaptureErrorAndWait(err, errTag)
@@ -149,11 +150,12 @@ func insertRoutesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
 	log.Error(err)
 }
 
-func insertVehiclesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
+func insertVehiclesChunk(dbC *dbr.Connection, log logrus.FieldLogger,
 	chunk []*municommodels.CNRGetVehiclesResponse, t time.Time) {
 
 	log = log.WithField("func", "insertVehiclesChunk")
 
+	dbS := dbC.NewSession(&dbr.NullEventReceiver{})
 	if len(chunk) > 0 {
 		if err := dataharvest.InsertCNRGetVehiclesResponsesIntoDb(dbS, chunk, t); err != nil {
 			raven.CaptureErrorAndWait(err, map[string]string{"func": "insertVehiclesChunk"})
@@ -186,7 +188,7 @@ func insertVehiclesChunk(dbS dbr.SessionRunner, log logrus.FieldLogger,
 var (
 	BuildTimeCommitMD5 string
 	BuildTimeTime      string
-	BuildTimeIsDev     = "false"
+	BuildTimeIsDev     string
 )
 
 func main() {
@@ -210,9 +212,10 @@ func main() {
 	cfg := loadConfig(log)
 	log.Infof("Loaded config: %s", spew.Sdump(cfg))
 
-	raven.SetDSN(cfg.SentryDSN)
-	raven.SetRelease(BuildTimeCommitMD5)
+	raven.SetDefaultLoggerName("dataharvester")
 	raven.SetEnvironment(cfg.SentryEnvironment)
+	raven.SetRelease(BuildTimeCommitMD5)
+	raven.SetDSN(cfg.SentryDSN)
 
 	client := municommodels.NewWebServiceClient(log, cfg.ClientName, cfg.ClientUA, cfg.ClientURL)
 	sessionCookies := []http.Cookie{{Name: "ASP.NET_SessionId", Value: cfg.ClientCookie}}
@@ -224,7 +227,11 @@ func main() {
 	if err != nil {
 		log.WithError(err).Fatal("Cannot connect to database")
 	}
-	dbSess := dbConn.NewSession(&dbr.NullEventReceiver{})
+	dbConn.SetConnMaxLifetime(10 * time.Minute)
+
+	if err := common.WaitForPostgres(dbConn, 10, log); err != nil {
+		log.WithError(err).Fatal("Cannot connect to database")
+	}
 
 	tz, err := time.LoadLocation("Europe/Warsaw")
 	if err != nil {
@@ -232,8 +239,19 @@ func main() {
 	}
 
 	log.Info("Initialization completed")
+
+	coldStart := true
 	routes := &municommodels.GetRouteAndVariantsResponse{}
 	for {
+		now := time.Now().In(tz)
+
+		if !coldStart {
+			d := time.Until(time.Date(now.Year(), now.Month(), now.Day(), 3, 0, 0, 0, tz))
+			log.Infof("Will now wait %v", d)
+			time.Sleep(d)
+			coldStart = false
+		}
+
 		ctx, canc := context.WithTimeout(context.Background(), time.Second)
 		routes, err = client.CallGetRouteAndVariants(ctx, sessionCookies, municommodels.GetRouteAndVariants{})
 		if err != nil {
@@ -243,9 +261,10 @@ func main() {
 		}
 		canc()
 
-		now := time.Now().In(tz)
+		now = time.Now().In(tz)
+		calibrationTime := time.Date(now.Year(), now.Month(), (now.Day() + 1), 1, 59, 39, 0, tz)
 
-		insertRoutesChunk(dbSess, log, routes, now)
+		insertRoutesChunk(dbConn, log, routes, now)
 
 		if ok, err := calibrate(client, log, sessionCookies, routes); !ok {
 			raven.CaptureMessageAndWait("calibration failed", nil)
@@ -253,7 +272,7 @@ func main() {
 		}
 		log.Info("Calibration completed")
 
-		for now.Before(time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, tz)) {
+		for now.Before(calibrationTime) {
 			durationPool := 21 * time.Second
 			var vehiclesChunk []*municommodels.CNRGetVehiclesResponse
 			for _, r := range routes.GetRouteAndVariantsResult.L {
@@ -265,7 +284,7 @@ func main() {
 
 				payload := municommodels.CNRGetVehicles{
 					R: r.Number,
-					// TODO(amwolff): we should probably also query by 'V'
+					// TODO(amwolff): we should probably also query by 'V' to avoid data duplication
 					D: r.Direction,
 				}
 
@@ -291,7 +310,7 @@ func main() {
 				durationPool -= time.Since(now)
 			}
 
-			go insertVehiclesChunk(dbSess, log, vehiclesChunk, now)
+			go insertVehiclesChunk(dbConn, log, vehiclesChunk, now)
 
 			log.Infof("Will now wait %v", durationPool)
 			time.Sleep(durationPool)

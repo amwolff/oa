@@ -1,18 +1,18 @@
 'use strict';
-let oamap = L.map('oamap').fitWorld().setView([53.773056, 20.476111], 12);
+let map = L.map('map').fitWorld().setView([53.773056, 20.476111], 12);
 L.tileLayer.wms('http://msipmo.olsztyn.eu/arcgis/services/msipmo_Plan/MapServer/WMSServer?', {
     layers: '0,1,2,3,4,5,6,7,8,9,10,11,12',
     tileSize: 256,
     format: 'image/png',
     maxZoom: 16,
-}).addTo(oamap);
+}).addTo(map);
 
 function onLocationFound(e) {
-    L.circle(e.latlng, (e.accuracy / 2)).addTo(oamap);
+    L.circle(e.latlng, (e.accuracy / 2)).addTo(map);
 }
 
-oamap.on('locationfound', onLocationFound);
-oamap.locate({setView: false, maxZoom: 16});
+map.on('locationfound', onLocationFound);
+map.locate({setView: false, maxZoom: 16});
 
 let availableRoutes;
 let vehiclesLayerGroups = [];
@@ -198,7 +198,7 @@ function fireNextRefresh(lastModifiedDate) {
 }
 
 function refreshMap() {
-    fetch('http://localhost:8080/VehiclesData')
+    fetch('http://68.183.64.110:8080/Vehicles')
         .then(function (response) {
             let lastModified = new Date(response.headers.get("Last-Modified"));
             fireNextRefresh(lastModified);
@@ -210,7 +210,7 @@ function refreshMap() {
 }
 
 function initializeMap() {
-    fetch('http://localhost:8080/AvailableRoutes')
+    fetch('http://68.183.64.110:8080/Routes')
         .then(function (response) {
             return response.json();
         })
@@ -220,7 +220,7 @@ function initializeMap() {
             availableRoutes.forEach(r => {
                 vehiclesLayerGroups[r.route] = new L.LayerGroup();
             });
-            L.control.layers(null, vehiclesLayerGroups).addTo(oamap).expand();
+            L.control.layers(null, vehiclesLayerGroups).addTo(map).expand();
 
             refreshMap();
         });

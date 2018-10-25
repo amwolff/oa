@@ -42,15 +42,15 @@
   revision = "084a9de9eb0361fbd5ded14b55c84e5493a5d7f6"
 
 [[projects]]
-  digest = "1:cf623928a26c43026e7921854a3144feb1f1459caa8bb222024555ad00340ca3"
+  digest = "1:083bd57e1a2b764eb19b70e7816bc1385b30d73191540e2756dceb445eff2eb2"
   name = "github.com/gocraft/dbr"
   packages = [
     ".",
     "dialect",
   ]
   pruneopts = "UT"
-  revision = "a0fd650918f6287ffe111d1c7b66bb755ff3be4a"
-  version = "v2.2"
+  revision = "b542ddb88301820e373c3152d83dd6cab8786985"
+  version = "v2.3"
 
 [[projects]]
   branch = "master"
