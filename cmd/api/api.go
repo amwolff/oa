@@ -14,6 +14,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/getsentry/raven-go"
 	"github.com/gocraft/dbr"
+	"github.com/gocraft/dbr/dialect"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
@@ -80,6 +81,69 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	return
 }
 
+func buildStaticQueries() (map[string]string, error) {
+	m := make(map[string]string)
+	d := dialect.PostgreSQL
+
+	{
+		q := dbr.
+			Select(
+				"ts",
+				"number",
+			).
+			Distinct().
+			From("olsztyn_static.routes").
+			Where("ts = (SELECT ts FROM olsztyn_static.routes ORDER BY id DESC LIMIT 1)").
+			OrderBy("number")
+
+		buf := dbr.NewBuffer()
+		if err := q.Build(d, buf); err != nil {
+			return nil, err
+		}
+		stmt, err := dbr.InterpolateForDialect(buf.String(), buf.Value(), d)
+		if err != nil {
+			return nil, err
+		}
+		m["Routes"] = stmt
+	}
+	{
+		q := dbr.
+			Select(
+				"ts",
+				"nb",
+				"typ_pojazdu",
+				"numer_lini",
+				"id_kursu",
+				"szerokosc",
+				"dlugosc",
+				"prev_szerokosc",
+				"prev_dlugosc",
+				"odchylenie",
+				"opis_tabl",
+				"nast_num_lini",
+				"nast_id_kursu",
+				"ile_sek_do_odjazdu",
+				"nast_opis_tabl",
+				"wektor",
+			).
+			From("olsztyn_live.vehicles").
+			Where("ts = (SELECT ts FROM olsztyn_live.vehicles ORDER BY id DESC LIMIT 1)").
+			OrderBy("numer_lini")
+
+		buf := dbr.NewBuffer()
+		if err := q.Build(d, buf); err != nil {
+			return nil, err
+		}
+		stmt, err := dbr.InterpolateForDialect(buf.String(), buf.Value(), d)
+		if err != nil {
+			return nil, err
+		}
+		m["Vehicles"] = stmt
+	}
+
+	return m, nil
+}
+
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Last-Modified#Syntax
 const lastModifiedTimeFormat = "Mon, 02 Jan 2006 15:04:05 GMT"
 
@@ -88,23 +152,14 @@ type routesResponse struct {
 	Route     string    `json:"route" db:"number"`
 }
 
-func endpointRoutes(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
+func endpointRoutes(dbC *dbr.Connection, q string, log logrus.FieldLogger) http.HandlerFunc {
 	log = log.WithField("handler", "AvailableRoutes")
-	q := dbS.
-		Select(
-			"ts",
-			"number",
-		).
-		Distinct().
-		From("olsztyn_static.routes").
-		Where("ts = (SELECT ts FROM olsztyn_static.routes ORDER BY id DESC LIMIT 1)").
-		OrderBy("number")
 
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://68.183.64.110")
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		var resp []routesResponse
-		if err := q.LoadOne(&resp); err != nil {
+		if err := dbC.NewSession(nil).SelectBySql(q).LoadOne(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
 			raven.CaptureErrorAndWait(err, map[string]string{"func": "LoadOne"})
 			log.WithError(err).WithField("func", "LoadOne").Error("Cannot execute query")
@@ -122,7 +177,7 @@ func endpointRoutes(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerF
 
 type busStopsResponse struct{}
 
-func endpointBusStops(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
+func endpointBusStops(dbC *dbr.Connection, q string, log logrus.FieldLogger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {}
 }
 
@@ -145,38 +200,14 @@ type vehiclesResponse struct {
 	Vector          float64   `json:"vector"           db:"wektor"`
 }
 
-func endpointVehicles(dbS dbr.SessionRunner, log logrus.FieldLogger) http.HandlerFunc {
+func endpointVehicles(dbC *dbr.Connection, q string, log logrus.FieldLogger) http.HandlerFunc {
 	log = log.WithField("handler", "VehiclesData")
-	// The database call might be WAY more optimized, but I'm leaving this the
-	// way it is since we don't anticipate 10k calls /s kind of traffic.
-	q := dbS.
-		Select(
-			"ts",
-			"nb",
-			"typ_pojazdu",
-			"numer_lini",
-			"id_kursu",
-			"szerokosc",
-			"dlugosc",
-			"prev_szerokosc",
-			"prev_dlugosc",
-			"odchylenie",
-			"opis_tabl",
-			"nast_num_lini",
-			"nast_id_kursu",
-			"ile_sek_do_odjazdu",
-			"nast_opis_tabl",
-			"wektor",
-		).
-		From("olsztyn_live.vehicles").
-		Where("ts = (SELECT ts FROM olsztyn_live.vehicles ORDER BY id DESC LIMIT 1)").
-		OrderBy("numer_lini")
 
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://68.183.64.110")
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		var resp []vehiclesResponse
-		if err := q.LoadOne(&resp); err != nil {
+		if err := dbC.NewSession(nil).SelectBySql(q).LoadOne(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
 			raven.CaptureErrorAndWait(err, map[string]string{"func": "LoadOne"})
 			log.WithError(err).WithField("func", "LoadOne").Error("Cannot execute query")
@@ -219,6 +250,11 @@ func main() {
 	cfg := loadConfig(log)
 	log.Infof("Loaded config: %s", spew.Sdump(cfg))
 
+	queries, err := buildStaticQueries()
+	if err != nil {
+		log.WithError(err).Panic("Cannot build static queries")
+	}
+
 	raven.SetDefaultLoggerName("API")
 	raven.SetEnvironment(cfg.SentryEnvironment)
 	raven.SetRelease(BuildTimeCommitMD5)
@@ -237,8 +273,6 @@ func main() {
 		log.WithError(err).Fatal("Cannot connect to database")
 	}
 
-	dbSess := dbConn.NewSession(&dbr.NullEventReceiver{})
-
 	// tz, err := time.LoadLocation("Europe/Warsaw")
 	// if err != nil {
 	// 	log.WithError(err).Fatal("Cannot parse location")
@@ -248,8 +282,8 @@ func main() {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.Error(w, "", http.StatusBadRequest) })
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
 	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) { return })
-	mux.Handle("/Routes", gziphandler.GzipHandler(endpointRoutes(dbSess, log)))
-	mux.Handle("/Vehicles", gziphandler.GzipHandler(endpointVehicles(dbSess, log)))
+	mux.Handle("/Routes", gziphandler.GzipHandler(endpointRoutes(dbConn, queries["Routes"], log)))
+	mux.Handle("/Vehicles", gziphandler.GzipHandler(endpointVehicles(dbConn, queries["Vehicles"], log)))
 
 	srv := http.Server{
 		Addr:    cfg.Addr,
