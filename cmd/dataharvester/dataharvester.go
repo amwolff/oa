@@ -249,6 +249,7 @@ func main() {
 			d := time.Until(time.Date(now.Year(), now.Month(), now.Day(), 3, 0, 0, 0, tz))
 			log.Infof("Will now wait %v", d)
 			time.Sleep(d)
+		} else {
 			coldStart = false
 		}
 
@@ -316,5 +317,6 @@ func main() {
 			time.Sleep(durationPool)
 			now = time.Now().In(tz)
 		}
+		log.Info("Will now perform calibration")
 	}
 }
