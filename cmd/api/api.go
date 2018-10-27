@@ -28,7 +28,8 @@ type config struct {
 	DbUser string
 	DbPass string
 
-	Addr string
+	Addr       string
+	HealthPath string
 
 	LogLevel    string
 	LogDir      string
@@ -49,6 +50,7 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	pflag.String("dbPass", "data_service", "Database password")
 
 	pflag.String("addr", ":8080", "Port to listen at")
+	pflag.String("healthPath", "/healthz", "")
 
 	pflag.String("logLevel", "debug", "Logging level")
 	pflag.String("logDir", "/tmp", "Logs directory")
@@ -280,7 +282,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.Error(w, "", http.StatusBadRequest) })
-	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
+	mux.HandleFunc(cfg.HealthPath, func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
 	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) { return })
 	mux.Handle("/Routes", gziphandler.GzipHandler(endpointRoutes(dbConn, queries["Routes"], log)))
 	mux.Handle("/Vehicles", gziphandler.GzipHandler(endpointVehicles(dbConn, queries["Vehicles"], log)))

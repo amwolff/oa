@@ -268,7 +268,7 @@ func main() {
 		insertRoutesChunk(dbConn, log, routes, now)
 
 		if ok, err := calibrate(client, log, sessionCookies, routes); !ok {
-			raven.CaptureMessageAndWait("calibration failed", nil)
+			raven.CaptureErrorAndWait(errors.Wrap(err, "calibration failed"), nil)
 			log.WithError(err).Fatal("Calibration unsuccessful")
 		}
 		log.Info("Calibration completed")
@@ -295,7 +295,7 @@ func main() {
 					canc()
 					if vehicles != nil {
 						log.WithError(err).Warn("Results' sanitation unsuccessful")
-						// TODO(amwolff): rescue data
+						// TODO(amwolff): rescue data in case of sanitation error
 					}
 					raven.CaptureError(err, map[string]string{"call-to": "CallCNRGetVehicles"})
 					log.WithError(err).Error("CallCNRGetVehicles")
@@ -317,6 +317,6 @@ func main() {
 			time.Sleep(durationPool)
 			now = time.Now().In(tz)
 		}
-		log.Info("Will now perform calibration")
+		log.Info("Will soon perform calibration")
 	}
 }

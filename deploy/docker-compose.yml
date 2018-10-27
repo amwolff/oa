@@ -9,28 +9,26 @@ services:
         delay: 5s
         max_attempts: 1
         window: 60s
-    ports:
-      - '5432:5432'
     networks:
       backend:
         aliases:
           - oa-postgres-ip-alias
   dataharvester:
-    image: 'amwolff/oa:dataharvester_v0.2'
+    image: 'amwolff/oa:dataharvester_v0.4'
     deploy:
       mode: global
       restart_policy:
         condition: on-failure
-        delay: 360s
-        max_attempts: 10
+        delay: 600s
+        max_attempts: 6
     depends_on:
       - db
     networks:
       - backend
   api:
-    image: 'amwolff/oa:api_v0.2'
+    image: 'amwolff/oa:api_v0.4'
     deploy:
-      replicas: 5
+      replicas: 1
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -42,9 +40,9 @@ services:
     networks:
       - backend
   dirserver:
-    image: 'amwolff/oa:dirserver_v0.1'
+    image: 'amwolff/oa:dirserver_v0.3'
     deploy:
-      replicas: 3
+      replicas: 1
       restart_policy:
         condition: on-failure
         delay: 5s

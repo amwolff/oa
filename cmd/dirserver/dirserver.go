@@ -16,6 +16,7 @@ import (
 
 type config struct {
 	Addr              string
+	HealthPath        string
 	ServeFrom         string
 	LogLevel          string
 	LogDir            string
@@ -29,6 +30,7 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	viper.Set("LogFile", os.Stderr)
 
 	pflag.String("addr", ":8080", "Port to listen at")
+	pflag.String("healthPath", "/healthz", "")
 	pflag.String("serveFrom", "", "Directory to serve from")
 
 	pflag.String("logLevel", "debug", "Logging level")
@@ -103,7 +105,7 @@ func main() {
 	raven.SetDSN(cfg.SentryDSN)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
+	mux.HandleFunc(cfg.HealthPath, func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
 	mux.Handle("/", mainHandler(cfg.ServeFrom, log))
 
 	srv := http.Server{

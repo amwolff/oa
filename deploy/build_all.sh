@@ -5,7 +5,7 @@ set -u
 set -x
 
 REPO=${GOPATH}/src/github.com/amwolff/oa
-DEPLOYMENT=${GOPATH}/src/github.com/amwolff/oa/deployment
+DEPLOYMENT=${GOPATH}/src/github.com/amwolff/oa/deploy
 
 VERSION=$1
 
