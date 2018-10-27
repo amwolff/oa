@@ -10,3 +10,8 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+/deploy/cache
+deploy/services/api/config.yml
+deploy/services/dataharvester/config.yml
+deploy/services/dirserver/config.yml

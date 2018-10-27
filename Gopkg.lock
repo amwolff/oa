@@ -10,6 +10,14 @@
   version = "v1.0.1"
 
 [[projects]]
+  digest = "1:fed1f537c2f1269fe475a8556c393fe466641682d73ef8fd0491cd3aa1e47bad"
+  name = "github.com/certifi/gocertifi"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "deb3ae2ef2610fde3330947281941c562861188b"
+  version = "2018.01.18"
+
+[[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
@@ -26,15 +34,23 @@
   version = "v1.4.7"
 
 [[projects]]
-  digest = "1:cf623928a26c43026e7921854a3144feb1f1459caa8bb222024555ad00340ca3"
+  branch = "master"
+  digest = "1:64ef2c2f0f508690f06c1b009e1e3103441ce60c2db0323ff94d8d1c560ec10b"
+  name = "github.com/getsentry/raven-go"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "084a9de9eb0361fbd5ded14b55c84e5493a5d7f6"
+
+[[projects]]
+  digest = "1:083bd57e1a2b764eb19b70e7816bc1385b30d73191540e2756dceb445eff2eb2"
   name = "github.com/gocraft/dbr"
   packages = [
     ".",
     "dialect",
   ]
   pruneopts = "UT"
-  revision = "a0fd650918f6287ffe111d1c7b66bb755ff3be4a"
-  version = "v2.2"
+  revision = "b542ddb88301820e373c3152d83dd6cab8786985"
+  version = "v2.3"
 
 [[projects]]
   branch = "master"
@@ -198,6 +214,7 @@
     "github.com/NYTimes/gziphandler",
     "github.com/davecgh/go-spew/spew",
     "github.com/fsnotify/fsnotify",
+    "github.com/getsentry/raven-go",
     "github.com/gocraft/dbr",
     "github.com/lib/pq",
     "github.com/pkg/errors",

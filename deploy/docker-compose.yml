@@ -1,0 +1,56 @@
+version: '3'
+services:
+  db:
+    image: 'amwolff/oa:oadb_v0.1'
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 1
+        window: 60s
+    networks:
+      backend:
+        aliases:
+          - oa-postgres-ip-alias
+  dataharvester:
+    image: 'amwolff/oa:dataharvester_v0.4'
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 600s
+        max_attempts: 6
+    depends_on:
+      - db
+    networks:
+      - backend
+  api:
+    image: 'amwolff/oa:api_v0.4'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+    depends_on:
+      - db
+    ports:
+      - '8080:80'
+    networks:
+      - backend
+  dirserver:
+    image: 'amwolff/oa:dirserver_v0.3'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+    ports:
+      - '80:80'
+    networks:
+      - frontend
+networks:
+  frontend: null
+  backend: null
