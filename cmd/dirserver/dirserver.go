@@ -112,6 +112,7 @@ func main() {
 		Addr:    cfg.Addr,
 		Handler: mux,
 	}
+
 	log.Info("Initialization completed")
 
 	log.Infof("Begin listening on %s", srv.Addr)

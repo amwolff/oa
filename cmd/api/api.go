@@ -83,12 +83,25 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	return
 }
 
-func buildStaticQueries() (map[string]string, error) {
-	m := make(map[string]string)
+func build(stmt *dbr.SelectStmt) (string, error) {
 	d := dialect.PostgreSQL
 
+	buf := dbr.NewBuffer()
+	if err := stmt.Build(d, buf); err != nil {
+		return "", err
+	}
+	q, err := dbr.InterpolateForDialect(buf.String(), buf.Value(), d)
+	if err != nil {
+		return "", err
+	}
+
+	return q, nil
+}
+
+func buildStaticQueries() (map[string]string, error) {
+	m := make(map[string]string)
 	{
-		q := dbr.
+		sel := dbr.
 			Select(
 				"ts",
 				"number",
@@ -98,33 +111,24 @@ func buildStaticQueries() (map[string]string, error) {
 			Where("ts = (SELECT ts FROM olsztyn_static.routes ORDER BY id DESC LIMIT 1)").
 			OrderBy("number")
 
-		buf := dbr.NewBuffer()
-		if err := q.Build(d, buf); err != nil {
-			return nil, err
-		}
-		stmt, err := dbr.InterpolateForDialect(buf.String(), buf.Value(), d)
+		q, err := build(sel)
 		if err != nil {
 			return nil, err
 		}
-		m["Routes"] = stmt
+		m["Routes"] = q
 	}
 	{
-		q := dbr.
+		sel := dbr.
 			Select(
 				"ts",
-				"nb",
-				"typ_pojazdu",
 				"numer_lini",
 				"id_kursu",
 				"szerokosc",
 				"dlugosc",
-				"prev_szerokosc",
-				"prev_dlugosc",
 				"odchylenie",
 				"opis_tabl",
 				"nast_num_lini",
 				"nast_id_kursu",
-				"ile_sek_do_odjazdu",
 				"nast_opis_tabl",
 				"wektor",
 			).
@@ -132,17 +136,12 @@ func buildStaticQueries() (map[string]string, error) {
 			Where("ts = (SELECT ts FROM olsztyn_live.vehicles ORDER BY id DESC LIMIT 1)").
 			OrderBy("numer_lini")
 
-		buf := dbr.NewBuffer()
-		if err := q.Build(d, buf); err != nil {
-			return nil, err
-		}
-		stmt, err := dbr.InterpolateForDialect(buf.String(), buf.Value(), d)
+		q, err := build(sel)
 		if err != nil {
 			return nil, err
 		}
-		m["Vehicles"] = stmt
+		m["Vehicles"] = q
 	}
-
 	return m, nil
 }
 
@@ -160,6 +159,7 @@ func endpointRoutes(dbC *dbr.Connection, q string, log logrus.FieldLogger) http.
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://68.183.64.110")
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.Header().Set("Cache-Control", "no-cache") // TODO(amwolff): set cache control properly
 		var resp []routesResponse
 		if err := dbC.NewSession(nil).SelectBySql(q).LoadOne(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
@@ -185,19 +185,14 @@ func endpointBusStops(dbC *dbr.Connection, q string, log logrus.FieldLogger) htt
 
 type vehiclesResponse struct {
 	Timestamp       time.Time `json:"-"                db:"ts"`
-	VehicleID       int       `json:"vehicle_id"       db:"nb"`
-	VehicleType     string    `json:"vehicle_type"     db:"typ_pojazdu"`
 	Route           string    `json:"route"            db:"numer_lini"`
 	TripID          int       `json:"trip_id"          db:"id_kursu"`
 	Latitude        float64   `json:"latitude"         db:"szerokosc"`
 	Longitude       float64   `json:"longitude"        db:"dlugosc"`
-	LastLatitude    float64   `json:"last_latitude"    db:"prev_szerokosc"`
-	LastLongitude   float64   `json:"last_longitude"   db:"prev_dlugosc"`
 	Variance        int       `json:"variance"         db:"odchylenie"`
 	Description     string    `json:"description"      db:"opis_tabl"`
 	NextRoute       string    `json:"next_route"       db:"nast_num_lini"`
 	NextTripID      int       `json:"next_trip_id"     db:"nast_id_kursu"`
-	DepartureIn     int       `json:"departure_in"     db:"ile_sek_do_odjazdu"`
 	NextDescription string    `json:"next_description" db:"nast_opis_tabl"`
 	Vector          float64   `json:"vector"           db:"wektor"`
 }
@@ -208,6 +203,7 @@ func endpointVehicles(dbC *dbr.Connection, q string, log logrus.FieldLogger) htt
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://68.183.64.110")
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.Header().Set("Cache-Control", "no-cache") // TODO(amwolff): set cache control properly
 		var resp []vehiclesResponse
 		if err := dbC.NewSession(nil).SelectBySql(q).LoadOne(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
@@ -252,6 +248,11 @@ func main() {
 	cfg := loadConfig(log)
 	log.Infof("Loaded config: %s", spew.Sdump(cfg))
 
+	// tz, err := time.LoadLocation("Europe/Warsaw")
+	// if err != nil {
+	// 	log.WithError(err).Fatal("Cannot parse location")
+	// }
+
 	queries, err := buildStaticQueries()
 	if err != nil {
 		log.WithError(err).Panic("Cannot build static queries")
@@ -275,11 +276,6 @@ func main() {
 		log.WithError(err).Fatal("Cannot connect to database")
 	}
 
-	// tz, err := time.LoadLocation("Europe/Warsaw")
-	// if err != nil {
-	// 	log.WithError(err).Fatal("Cannot parse location")
-	// }
-
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.Error(w, "", http.StatusBadRequest) })
 	mux.HandleFunc(cfg.HealthPath, func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
@@ -291,6 +287,7 @@ func main() {
 		Addr:    cfg.Addr,
 		Handler: mux,
 	}
+
 	log.Info("Initialization completed")
 
 	log.Infof("Begin listening on %s", srv.Addr)

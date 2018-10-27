@@ -212,6 +212,11 @@ func main() {
 	cfg := loadConfig(log)
 	log.Infof("Loaded config: %s", spew.Sdump(cfg))
 
+	tz, err := time.LoadLocation("Europe/Warsaw")
+	if err != nil {
+		log.WithError(err).Fatal("Cannot parse location")
+	}
+
 	raven.SetDefaultLoggerName("dataharvester")
 	raven.SetEnvironment(cfg.SentryEnvironment)
 	raven.SetRelease(BuildTimeCommitMD5)
@@ -231,11 +236,6 @@ func main() {
 
 	if err := common.WaitForPostgres(dbConn, 10, log); err != nil {
 		log.WithError(err).Fatal("Cannot connect to database")
-	}
-
-	tz, err := time.LoadLocation("Europe/Warsaw")
-	if err != nil {
-		log.WithError(err).Fatal("Cannot parse location")
 	}
 
 	log.Info("Initialization completed")

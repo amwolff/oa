@@ -181,7 +181,6 @@ function insertOnMap(rawVehicles) {
     });
 }
 
-
 function fireNextRefresh(lastModifiedDate) {
     let refreshAfter = 22000 - (Date.now() - lastModifiedDate);
     if (refreshAfter < 0) {
