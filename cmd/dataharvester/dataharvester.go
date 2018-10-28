@@ -246,7 +246,7 @@ func main() {
 		now := time.Now().In(tz)
 
 		if !coldStart {
-			d := time.Until(time.Date(now.Year(), now.Month(), now.Day(), 3, 0, 0, 0, tz))
+			d := time.Until(time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0, 0, tz))
 			log.Infof("Will now wait %v", d)
 			time.Sleep(d)
 		} else {
@@ -268,7 +268,8 @@ func main() {
 		insertRoutesChunk(dbConn, log, routes, now)
 
 		if ok, err := calibrate(client, log, sessionCookies, routes); !ok {
-			raven.CaptureErrorAndWait(errors.Wrap(err, "calibration failed"), nil)
+			// However this is absurd - Sentry doesn't handle <nil> errors.
+			raven.CaptureMessageAndWait(fmt.Sprintf("calibration failed (%v)", err), nil)
 			log.WithError(err).Fatal("Calibration unsuccessful")
 		}
 		log.Info("Calibration completed")
