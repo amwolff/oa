@@ -3,8 +3,8 @@ let map = L.map('map', {attributionControl: false}).fitWorld().setView([53.77305
 
 L.tileLayer('https://api.mapbox.com/styles/v1/amwolff/cjnynkofj1jxf2ro9v4123t0v/tiles/256/{z}/{x}/{y}{r}?access_token={accessToken}', {
     accessToken: 'pk.eyJ1IjoiYW13b2xmZiIsImEiOiJjamtndGVqMnUwbjV2M3BueDRxNWtqODQ5In0.f6Sd2mM-5ozz45F4ZxlU8Q',
-    minZoom: 10,
-    maxZoom: 20,
+    minZoom: 12,
+    maxZoom: 19,
     detectRetina: true,
 }).addTo(map);
 L.control.attribution({
@@ -15,8 +15,10 @@ L.control.attribution({
     ' © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
     ' <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>').addTo(map);
 
+let userLocation = L.circle(null, {color: '#FF6C00', radius: 2.5, fillOpacity: 0.5}).addTo(map);
+
 function onLocationFound(e) {
-    L.circle(e.latlng, {color: '#FF6C00', radius: 2.5, fillOpacity: 0.5}).addTo(map);
+    userLocation.setLatLng(e.latlng);
 }
 
 map.on('locationfound', onLocationFound);
