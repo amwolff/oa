@@ -15,14 +15,19 @@ L.control.attribution({
     ' © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
     ' <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>').addTo(map);
 
-let userLocation = L.circle(null, {color: '#FF6C00', radius: 2.5, fillOpacity: 0.5}).addTo(map);
+let userLocation;
 
 function onLocationFound(e) {
-    userLocation.setLatLng(e.latlng);
+    let r = e.accuracy / 2;
+    if (map.hasLayer(userLocation)) {
+        userLocation.setLatLng(e.latlng).setRadius(r);
+        return;
+    }
+    userLocation = L.circle(e.latlng, {color: '#FF6C00', radius: r}).addTo(map);
 }
 
 map.on('locationfound', onLocationFound);
-map.locate({watch: true, setView: true, maxZoom: 18});
+map.locate({watch: true, setView: false, maxZoom: 18});
 
 let availableRoutes;
 let vehiclesLayerGroups = [];
