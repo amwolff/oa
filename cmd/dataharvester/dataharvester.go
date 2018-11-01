@@ -49,7 +49,7 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	pflag.String("clientName", "dataharvester", "Web Service Client name")
 	pflag.String("clientUA", "oaservice/1.0 (+https://ssdip.bip.gov.pl/artykuly/art-61-konstytucji-rp_75.html)", "Web Service Client UAString")
 	pflag.String("clientURL", "http://sip.zdzit.olsztyn.eu/PublicService.asmx", "Web Service URL")
-	pflag.String("clientCookie", "usziyhl5fh3ypxxyf5i0aavn", "ASP.NET_SessionId cookie")
+	pflag.String("clientCookie", "o41zqttsghzoiufjjxd01r5t", "ASP.NET_SessionId cookie")
 
 	pflag.String("dbHost", "localhost", "Database host")
 	pflag.Int("dbPort", 5432, "Database port")
@@ -99,7 +99,7 @@ func calibrate(client *municommodels.WebServiceClient, log logrus.FieldLogger,
 		log.Infof("calibrate: trying %s (%s)", payload.R, payload.D)
 
 		durationPool := 30 * time.Second
-		var actual, previous float64
+		var previous, actual float64
 		for durationPool > 0 {
 			if previous != 0 && previous != actual {
 				log.Debugf("calibrate: %f != %f", previous, actual)
@@ -268,7 +268,7 @@ func main() {
 		insertRoutesChunk(dbConn, log, routes, now)
 
 		if ok, err := calibrate(client, log, sessionCookies, routes); !ok {
-			// However this is absurd - Sentry doesn't handle <nil> errors.
+			// However absurd this is - Sentry doesn't handle <nil> errors.
 			raven.CaptureMessageAndWait(fmt.Sprintf("calibration failed (%v)", err), nil)
 			log.WithError(err).Fatal("Calibration unsuccessful")
 		}

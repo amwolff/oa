@@ -1,6 +1,6 @@
 'use strict';
 let map = L.map('map').fitWorld().setView([53.773056, 20.476111], 12);
-L.tileLayer.wms('http://msipmo.olsztyn.eu/arcgis/services/msipmo_Plan/MapServer/WMSServer?', {
+L.tileLayer.wms('https://msipmo.olsztyn.eu/arcgis/services/msipmo_Plan/MapServer/WMSServer?', {
     layers: '0,1,2,3,4,5,6,7,8,9,10,11,12',
     tileSize: 256,
     format: 'image/png',
@@ -197,7 +197,7 @@ function fireNextRefresh(lastModifiedDate) {
 }
 
 function refreshMap() {
-    fetch('http://68.183.64.110:8080/Vehicles')
+    fetch('https://api.autobusy.olsztyn.pl/Vehicles')
         .then(function (response) {
             let lastModified = new Date(response.headers.get("Last-Modified"));
             fireNextRefresh(lastModified);
@@ -209,7 +209,7 @@ function refreshMap() {
 }
 
 function initializeMap() {
-    fetch('http://68.183.64.110:8080/Routes')
+    fetch('https://api.autobusy.olsztyn.pl/Routes')
         .then(function (response) {
             return response.json();
         })

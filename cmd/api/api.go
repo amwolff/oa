@@ -157,9 +157,9 @@ func endpointRoutes(dbC *dbr.Connection, q string, log logrus.FieldLogger) http.
 	log = log.WithField("handler", "AvailableRoutes")
 
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://68.183.64.110")
+		w.Header().Set("Access-Control-Allow-Origin", "https://autobusy.olsztyn.pl")
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.Header().Set("Cache-Control", "no-cache") // TODO(amwolff): set cache control properly
 		var resp []routesResponse
 		if err := dbC.NewSession(nil).SelectBySql(q).LoadOne(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
@@ -201,9 +201,9 @@ func endpointVehicles(dbC *dbr.Connection, q string, log logrus.FieldLogger) htt
 	log = log.WithField("handler", "VehiclesData")
 
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://68.183.64.110")
+		w.Header().Set("Access-Control-Allow-Origin", "https://autobusy.olsztyn.pl")
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.Header().Set("Cache-Control", "no-cache") // TODO(amwolff): set cache control properly
 		var resp []vehiclesResponse
 		if err := dbC.NewSession(nil).SelectBySql(q).LoadOne(&resp); err != nil {
 			http.Error(w, "", http.StatusServiceUnavailable)
@@ -277,7 +277,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.Error(w, "", http.StatusBadRequest) })
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.Error(w, "Invalid Request", http.StatusBadRequest) })
 	mux.HandleFunc(cfg.HealthPath, func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
 	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) { return })
 	mux.Handle("/Routes", gziphandler.GzipHandler(endpointRoutes(dbConn, queries["Routes"], log)))
