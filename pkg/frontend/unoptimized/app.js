@@ -1,18 +1,26 @@
 'use strict';
-let map = L.map('map').fitWorld().setView([53.773056, 20.476111], 12);
-L.tileLayer.wms('https://msipmo.olsztyn.eu/arcgis/services/msipmo_Plan/MapServer/WMSServer?', {
-    layers: '0,1,2,3,4,5,6,7,8,9,10,11,12',
-    tileSize: 256,
-    format: 'image/png',
-    maxZoom: 16,
+let map = L.map('map', {attributionControl: false}).fitWorld().setView([53.773056, 20.476111], 15);
+
+L.tileLayer('https://api.mapbox.com/styles/v1/amwolff/cjnynkofj1jxf2ro9v4123t0v/tiles/256/{z}/{x}/{y}{r}?access_token={accessToken}', {
+    accessToken: 'pk.eyJ1IjoiYW13b2xmZiIsImEiOiJjamtndGVqMnUwbjV2M3BueDRxNWtqODQ5In0.f6Sd2mM-5ozz45F4ZxlU8Q',
+    minZoom: 10,
+    maxZoom: 20,
+    detectRetina: true,
 }).addTo(map);
+L.control.attribution({
+    prefix: false,
+    position: 'bottomright'
+}).addAttribution('Zgłoś błąd: <a href="mailto:kontakt@autobusy.olsztyn.pl">kontakt@autobusy.olsztyn.pl</a>' +
+    ' / © <a href="https://www.mapbox.com/about/maps/">Mapbox</a>' +
+    ' © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
+    ' <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>').addTo(map);
 
 function onLocationFound(e) {
-    L.circle(e.latlng, (e.accuracy / 2)).addTo(map);
+    L.circle(e.latlng, {color: '#FF6C00', radius: 2.5, fillOpacity: 0.5}).addTo(map);
 }
 
 map.on('locationfound', onLocationFound);
-map.locate({setView: false, maxZoom: 16});
+map.locate({watch: true, setView: true, maxZoom: 18});
 
 let availableRoutes;
 let vehiclesLayerGroups = [];
@@ -31,7 +39,6 @@ function InternalVehicle(rawVehicle) {
         this.description = rawVehicle.description;
         this.vector = 180 + rawVehicle.vector;
     }
-
 
     this.latitude = rawVehicle.latitude;
     this.longitude = rawVehicle.longitude;
@@ -134,7 +141,7 @@ function markerizeVehicles(internalVehicles) {
         let opts = {
             icon: L.divIcon({
                 html: getVehicleIcon(v),
-                className: "outerVehicleIcon",
+                className: 'outerVehicleIcon',
             }),
             alt: v.route,
             riseOnHover: true,
@@ -142,10 +149,10 @@ function markerizeVehicles(internalVehicles) {
         };
 
         let popupTemplate =
-            "<b>Linia nr {route}</b><br>" +
-            "Numer kursu: {trip_id}<br>" +
-            "Kierunek: {description}<br>" +
-            "{state}: {variance}s";
+            '<b>Linia nr {route}</b><br>' +
+            'Numer kursu: {trip_id}<br>' +
+            'Kierunek: {description}<br>' +
+            '{state}: {variance}s';
 
         let popupData = {
             route: v.route,
@@ -153,12 +160,11 @@ function markerizeVehicles(internalVehicles) {
             description: v.description,
         };
 
-
         if (v.isStall()) {
-            popupData.state = "Czas do odjazdu";
+            popupData.state = 'Czas do odjazdu';
             popupData.variance = v.variance;
         } else {
-            popupData.state = "Opóźnienie";
+            popupData.state = 'Opóźnienie';
             popupData.variance = -1 * v.variance;
         }
 
@@ -199,7 +205,7 @@ function fireNextRefresh(lastModifiedDate) {
 function refreshMap() {
     fetch('https://api.autobusy.olsztyn.pl/Vehicles')
         .then(function (response) {
-            let lastModified = new Date(response.headers.get("Last-Modified"));
+            let lastModified = new Date(response.headers.get('Last-Modified'));
             fireNextRefresh(lastModified);
             return response.json();
         })
