@@ -1,34 +1,4 @@
 'use strict';
-let map = L.map('map', {attributionControl: false}).fitWorld().setView([53.773056, 20.476111], 15);
-
-L.tileLayer('https://api.mapbox.com/styles/v1/amwolff/cjnynkofj1jxf2ro9v4123t0v/tiles/256/{z}/{x}/{y}{r}?access_token={accessToken}', {
-    accessToken: 'pk.eyJ1IjoiYW13b2xmZiIsImEiOiJjamtndGVqMnUwbjV2M3BueDRxNWtqODQ5In0.f6Sd2mM-5ozz45F4ZxlU8Q',
-    minZoom: 12,
-    maxZoom: 19,
-    detectRetina: true,
-}).addTo(map);
-L.control.attribution({
-    prefix: false,
-    position: 'bottomright'
-}).addAttribution('Zgłoś błąd: <a href="mailto:kontakt@autobusy.olsztyn.pl">kontakt@autobusy.olsztyn.pl</a>' +
-    ' / © <a href="https://www.mapbox.com/about/maps/">Mapbox</a>' +
-    ' © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
-    ' <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>').addTo(map);
-
-let userLocation;
-
-function onLocationFound(e) {
-    let r = e.accuracy / 2;
-    if (map.hasLayer(userLocation)) {
-        userLocation.setLatLng(e.latlng).setRadius(r);
-        return;
-    }
-    userLocation = L.circle(e.latlng, {color: '#FF6C00', radius: r}).addTo(map);
-}
-
-map.on('locationfound', onLocationFound);
-map.locate({watch: true, setView: false, maxZoom: 18});
-
 let availableRoutes;
 let vehiclesLayerGroups = [];
 
@@ -194,22 +164,24 @@ function insertOnMap(rawVehicles) {
     });
 }
 
+// TODO(amwolff): swap elses with returns
 function fireNextRefresh(lastModifiedDate) {
     let refreshAfter = 22000 - (Date.now() - lastModifiedDate);
     if (refreshAfter < 0) {
         if (refreshAfter > -21000) {
-            setTimeout(refreshMap, 1000);
+            setTimeout(refresh, 1000);
         } else {
-            console.log("Refreshing the map has been stalled. " +
+            console.log(
+                "Refreshing the map has been stalled. " +
                 "This can happen when there's a problem with the data source. " +
-                "Reload the page to start the refreshing again.")
+                "Reload the page to start the refreshing again.");
         }
     } else {
-        setTimeout(refreshMap, refreshAfter);
+        setTimeout(refresh, refreshAfter);
     }
 }
 
-function refreshMap() {
+function refresh() {
     fetch('https://api.autobusy.olsztyn.pl/Vehicles')
         .then(function (response) {
             let lastModified = new Date(response.headers.get('Last-Modified'));
@@ -221,7 +193,49 @@ function refreshMap() {
         });
 }
 
-function initializeMap() {
+function entrypoint() {
+    let map = L.map('map', {attributionControl: false}).setView([53.773056, 20.476111], 14);
+
+    L.tileLayer('https://api.mapbox.com/styles/v1/amwolff/cjnynkofj1jxf2ro9v4123t0v/tiles/256/{z}/{x}/{y}{r}?access_token={t}', {
+        t: 'pk.eyJ1IjoiYW13b2xmZiIsImEiOiJjamtndGVqMnUwbjV2M3BueDRxNWtqODQ5In0.f6Sd2mM-5ozz45F4ZxlU8Q',
+        minZoom: 9,
+        maxZoom: 18,
+        detectRetina: true,
+    }).addTo(map);
+
+    L.control.attribution({
+        prefix: false,
+        position: 'bottomright'
+    }).addAttribution(
+        '<a href="mailto:kontakt@autobusy.olsztyn.pl">Zgłoś błąd</a>' +
+        ' / © <a href="https://www.mapbox.com/about/maps/">Mapbox</a>' +
+        ' © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
+        ' <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>').addTo(map);
+
+    let userLocation;
+
+    let onLocationFound = function (e) {
+        let r = e.accuracy / 2;
+        if (map.hasLayer(userLocation)) {
+            userLocation.setLatLng(e.latlng).setRadius(r);
+            return;
+        }
+        userLocation = L.circle(e.latlng, {
+            radius: r,
+            color: '#FF6C00',
+            renderer: L.canvas(),
+        }).addTo(map);
+        map.flyToBounds(userLocation.getBounds(), {maxZoom: 17});
+    };
+
+    let onLocationError = function (e) {
+        console.log(e.message);
+    };
+
+    map.on('locationfound', onLocationFound);
+    map.on('locationerror', onLocationError);
+    map.locate({watch: true, enableHighAccuracy: true});
+
     fetch('https://api.autobusy.olsztyn.pl/Routes')
         .then(function (response) {
             return response.json();
@@ -234,8 +248,8 @@ function initializeMap() {
             });
             L.control.layers(null, vehiclesLayerGroups).addTo(map).expand();
 
-            refreshMap();
+            refresh();
         });
 }
 
-initializeMap();
+entrypoint();
