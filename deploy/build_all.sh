@@ -15,7 +15,7 @@ function buildBinary {
     DEV='false'
     
     cd ${REPO}/cmd/$1
-    env GOARCH=amd64 GOOS=linux go build -a \
+    env CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -a -installsuffix cgo \
     -ldflags="-X main.BuildTimeCommitMD5=$COMMIT -X main.BuildTimeTime=$TIME -X main.BuildTimeIsDev=$DEV" \
     -o ${DEPLOYMENT}/cache/$1/$1
 }
@@ -47,5 +47,6 @@ buildContainer dataharvester
 
 buildContainer api
 
-cp ${REPO}/pkg/frontend/* ${DEPLOYMENT}/cache/dirserver/
+cp ${REPO}/pkg/frontend/icos/* ${DEPLOYMENT}/cache/dirserver/
+cp ${REPO}/pkg/frontend/optimized/* ${DEPLOYMENT}/cache/dirserver/
 buildContainer dirserver

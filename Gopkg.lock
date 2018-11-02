@@ -216,6 +216,7 @@
     "github.com/fsnotify/fsnotify",
     "github.com/getsentry/raven-go",
     "github.com/gocraft/dbr",
+    "github.com/gocraft/dbr/dialect",
     "github.com/lib/pq",
     "github.com/pkg/errors",
     "github.com/sirupsen/logrus",
