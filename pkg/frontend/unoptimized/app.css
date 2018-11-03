@@ -8,11 +8,11 @@ html, body, #map {
     width: 100vw;
 }
 
-svg {
+.outerVehicleIcon {
     margin-left: -7px;
     margin-top: -19px;
     overflow: visible;
 }
 
-.outerVehicleIcon {
+.innerVehicleIcon {
 }
