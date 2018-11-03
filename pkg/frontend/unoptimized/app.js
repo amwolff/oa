@@ -39,7 +39,7 @@ function serializeVehicles(rawVehicles) {
 }
 
 function getVehicleIcon(internalVehicle) {
-    let iconTemplate = '<svg width="26" height="26">\n' +
+    let iconTemplate = '<svg class="outerVehicleIcon" width="26" height="26">\n' +
         '<path transform="rotate({rotate} 13 19)" fill="{fill}" stroke="{stroke}" stroke-width="2"\n' +
         'stroke-dasharray="{stroke_dasharray}" d="\n' +
         'M26\n' +
@@ -118,7 +118,7 @@ function markerizeVehicles(internalVehicles) {
         let opts = {
             icon: L.divIcon({
                 html: getVehicleIcon(v),
-                className: 'outerVehicleIcon',
+                className: 'innerVehicleIcon',
             }),
             alt: v.route,
             riseOnHover: true,
@@ -200,12 +200,11 @@ function entrypoint() {
         t: 'pk.eyJ1IjoiYW13b2xmZiIsImEiOiJjamtndGVqMnUwbjV2M3BueDRxNWtqODQ5In0.f6Sd2mM-5ozz45F4ZxlU8Q',
         minZoom: 9,
         maxZoom: 18,
-        detectRetina: true,
     }).addTo(map);
 
     L.control.attribution({
         prefix: false,
-        position: 'bottomright'
+        position: 'bottomright',
     }).addAttribution(
         '<a href="mailto:kontakt@autobusy.olsztyn.pl">Zgłoś błąd</a>' +
         ' / © <a href="https://www.mapbox.com/about/maps/">Mapbox</a>' +
@@ -223,7 +222,6 @@ function entrypoint() {
         userLocation = L.circle(e.latlng, {
             radius: r,
             color: '#FF6C00',
-            renderer: L.canvas(),
         }).addTo(map);
         map.flyToBounds(userLocation.getBounds(), {maxZoom: 17});
     };
