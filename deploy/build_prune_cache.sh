@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -u
-set -x
 
 CACHEDIR=${GOPATH}/src/github.com/amwolff/oa/deploy/cache
 
