@@ -9,12 +9,12 @@ function InternalVehicle(rawVehicle) {
         this.route = rawVehicle.next_route;
         this.trip_id = rawVehicle.next_trip_id;
         this.description = rawVehicle.next_description;
-        this.vector = 0;
+        this.azimuth = 0;
     } else {
         this.route = rawVehicle.route;
         this.trip_id = rawVehicle.trip_id;
         this.description = rawVehicle.description;
-        this.vector = 180 + rawVehicle.vector;
+        this.azimuth = 180 + rawVehicle.azimuth;
     }
 
     this.latitude = rawVehicle.latitude;
@@ -102,7 +102,7 @@ function getVehicleIcon(internalVehicle) {
     };
 
     let iconData = {
-        rotate: internalVehicle.vector,
+        rotate: internalVehicle.azimuth,
         fill: getRouteColor(internalVehicle.route),
         stroke: getIconBorderColor(internalVehicle.variance),
         stroke_dasharray: getIconBorderStyle(internalVehicle),

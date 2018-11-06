@@ -184,17 +184,18 @@ func endpointBusStops(dbC *dbr.Connection, q string, log logrus.FieldLogger) htt
 }
 
 type vehiclesResponse struct {
-	Timestamp       time.Time `json:"-"                db:"ts"`
-	Route           string    `json:"route"            db:"numer_lini"`
-	TripID          int       `json:"trip_id"          db:"id_kursu"`
-	Latitude        float64   `json:"latitude"         db:"szerokosc"`
-	Longitude       float64   `json:"longitude"        db:"dlugosc"`
-	Variance        int       `json:"variance"         db:"odchylenie"`
-	Description     string    `json:"description"      db:"opis_tabl"`
-	NextRoute       string    `json:"next_route"       db:"nast_num_lini"`
-	NextTripID      int       `json:"next_trip_id"     db:"nast_id_kursu"`
-	NextDescription string    `json:"next_description" db:"nast_opis_tabl"`
-	Vector          float64   `json:"vector"           db:"wektor"`
+	Timestamp time.Time `json:"-" db:"ts"`
+
+	Azimuth         float64 `json:"azimuth"          db:"wektor"`
+	Description     string  `json:"description"      db:"opis_tabl"`
+	Latitude        float64 `json:"latitude"         db:"szerokosc"`
+	Longitude       float64 `json:"longitude"        db:"dlugosc"`
+	NextDescription string  `json:"next_description" db:"nast_opis_tabl"`
+	NextRoute       string  `json:"next_route"       db:"nast_num_lini"`
+	NextTripID      int     `json:"next_trip_id"     db:"nast_id_kursu"`
+	Route           string  `json:"route"            db:"numer_lini"`
+	TripID          int     `json:"trip_id"          db:"id_kursu"`
+	Variance        int     `json:"variance"         db:"odchylenie"`
 }
 
 func endpointVehicles(dbC *dbr.Connection, q string, log logrus.FieldLogger) http.HandlerFunc {
