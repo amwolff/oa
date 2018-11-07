@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/NYTimes/gziphandler"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/fsnotify/fsnotify"
 	"github.com/getsentry/raven-go"
@@ -73,6 +74,7 @@ var (
 func mainHandler(serveDir string, log logrus.FieldLogger) http.HandlerFunc {
 	fs := http.FileServer(http.Dir(serveDir))
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "max-age=7200")
 		fs.ServeHTTP(w, r)
 		log.Infof("Served for %s", r.UserAgent())
 	})
@@ -106,7 +108,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc(cfg.HealthPath, func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
-	mux.Handle("/", mainHandler(cfg.ServeFrom, log))
+	mux.Handle("/", gziphandler.GzipHandler(mainHandler(cfg.ServeFrom, log)))
 
 	srv := http.Server{
 		Addr:    cfg.Addr,

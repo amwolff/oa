@@ -26,7 +26,7 @@ function InternalVehicle(rawVehicle) {
     };
 
     this.getMarker = function () {
-        // TODO(amw): that would be better than markerizing already internal data type
+        // TODO(amwolff): that would be better than markerizing already internal data type
     }
 }
 
@@ -112,6 +112,25 @@ function getVehicleIcon(internalVehicle) {
     return L.Util.template(iconTemplate, iconData);
 }
 
+// TODO(amwolff): make betterSeconds more informative name
+function betterSeconds(seconds) {
+    if (seconds > 60) {
+        let minutes = Math.floor(seconds / 60);
+        let remainingSeconds = seconds - 60 * minutes;
+        if (minutes > 60) {
+            let hours = Math.floor(minutes / 60);
+            let remainingMinutes = minutes - 60 * hours;
+            return L.Util.template('{HH}h {MM}m {SS}s', {
+                HH: hours,
+                MM: remainingMinutes,
+                SS: remainingSeconds,
+            });
+        }
+        return L.Util.template('{MM}m {SS}s', {MM: minutes, SS: remainingSeconds});
+    }
+    return L.Util.template('{SS}s', {SS: seconds});
+}
+
 function markerizeVehicles(internalVehicles) {
     let markerized = [];
     internalVehicles.forEach(v => {
@@ -129,7 +148,7 @@ function markerizeVehicles(internalVehicles) {
             '<b>Linia nr {route}</b><br>' +
             'Numer kursu: {trip_id}<br>' +
             'Kierunek: {description}<br>' +
-            '{state}: {variance}s';
+            '{state}: {variance}';
 
         let popupData = {
             route: v.route,
@@ -138,11 +157,21 @@ function markerizeVehicles(internalVehicles) {
         };
 
         if (v.isStall()) {
-            popupData.state = 'Czas do odjazdu';
-            popupData.variance = v.variance;
+            if (v.variance > 0) {
+                popupData.state = 'Czas do odjazdu';
+                popupData.variance = betterSeconds(v.variance);
+            } else {
+                popupData.state = 'Opóźnienie odjazdu';
+                popupData.variance = betterSeconds(-1 * v.variance);
+            }
         } else {
-            popupData.state = 'Opóźnienie';
-            popupData.variance = -1 * v.variance;
+            if (v.variance > 0) {
+                popupData.state = 'Przed czasem';
+                popupData.variance = betterSeconds(v.variance);
+            } else {
+                popupData.state = 'Opóźnienie';
+                popupData.variance = betterSeconds(-1 * v.variance);
+            }
         }
 
         markerized.push(L.marker([v.latitude, v.longitude], opts).bindPopup(L.Util.template(popupTemplate, popupData)));
@@ -196,7 +225,8 @@ function refresh() {
 function entrypoint() {
     let map = L.map('map', {attributionControl: false}).setView([53.773056, 20.476111], 14);
 
-    L.tileLayer('https://api.mapbox.com/styles/v1/amwolff/cjnynkofj1jxf2ro9v4123t0v/tiles/256/{z}/{x}/{y}{r}?access_token={t}', {
+    // TODO(amwolff): can we afford adding the {r} (retina tiles) parameter to the tile layer URL?
+    L.tileLayer('https://api.mapbox.com/styles/v1/amwolff/cjnynkofj1jxf2ro9v4123t0v/tiles/256/{z}/{x}/{y}?access_token={t}', {
         t: 'pk.eyJ1IjoiYW13b2xmZiIsImEiOiJjamtndGVqMnUwbjV2M3BueDRxNWtqODQ5In0.f6Sd2mM-5ozz45F4ZxlU8Q',
         minZoom: 9,
         maxZoom: 18,
