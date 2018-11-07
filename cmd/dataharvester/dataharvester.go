@@ -112,7 +112,7 @@ func calibrate(client *municommodels.WebServiceClient, log logrus.FieldLogger,
 			v, err := client.CallCNRGetVehicles(ctx, cookies, payload)
 			if err != nil {
 				canc()
-				return false, err
+				break
 			}
 			canc()
 
