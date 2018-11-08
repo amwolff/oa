@@ -223,7 +223,7 @@ function refresh() {
 }
 
 function entrypoint() {
-    let map = L.map('map', {attributionControl: false}).setView([53.773056, 20.476111], 14);
+    let map = L.map('map', {attributionControl: false, center: [53.773056, 20.476111], zoom: 14});
 
     // TODO(amwolff): can we afford adding the {r} (retina tiles) parameter to the tile layer URL?
     L.tileLayer('https://api.mapbox.com/styles/v1/amwolff/cjnynkofj1jxf2ro9v4123t0v/tiles/256/{z}/{x}/{y}?access_token={t}', {
