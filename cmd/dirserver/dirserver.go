@@ -96,7 +96,7 @@ func main() {
 		log.SetLevel(logrus.DebugLevel)
 	}
 
-	log.WithFields(initFields).Info("dirserver service greeting")
+	log.WithFields(initFields).Info("dirserver greeting")
 
 	cfg := loadConfig(log)
 	log.Infof("Loaded config: %s", spew.Sdump(cfg))

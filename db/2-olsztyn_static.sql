@@ -16,3 +16,5 @@ CREATE TABLE olsztyn_static.routes (
   transport    VARCHAR(1),
   direction    VARCHAR(1)
 );
+
+CREATE INDEX ON olsztyn_static.routes (ts DESC);
