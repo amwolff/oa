@@ -39,3 +39,5 @@ CREATE TABLE olsztyn_live.vehicles (
   nast_opis_tabl      VARCHAR,
   wektor              NUMERIC(5, 2)
 );
+
+CREATE INDEX ON olsztyn_live.vehicles (ts DESC);

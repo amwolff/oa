@@ -74,7 +74,7 @@ var (
 func mainHandler(serveDir string, log logrus.FieldLogger) http.HandlerFunc {
 	fs := http.FileServer(http.Dir(serveDir))
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Cache-Control", "max-age=7200")
+		w.Header().Set("Cache-Control", "max-age=14400")
 		fs.ServeHTTP(w, r)
 		log.Infof("Served for %s", r.UserAgent())
 	})
@@ -96,7 +96,7 @@ func main() {
 		log.SetLevel(logrus.DebugLevel)
 	}
 
-	log.WithFields(initFields).Info("dirserver service greeting")
+	log.WithFields(initFields).Info("dirserver greeting")
 
 	cfg := loadConfig(log)
 	log.Infof("Loaded config: %s", spew.Sdump(cfg))

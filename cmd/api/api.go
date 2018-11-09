@@ -177,12 +177,6 @@ func endpointRoutes(dbC *dbr.Connection, q string, log logrus.FieldLogger) http.
 	})
 }
 
-type busStopsResponse struct{}
-
-func endpointBusStops(dbC *dbr.Connection, q string, log logrus.FieldLogger) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {}
-}
-
 type vehiclesResponse struct {
 	Timestamp time.Time `json:"-" db:"ts"`
 

@@ -112,8 +112,7 @@ function getVehicleIcon(internalVehicle) {
     return L.Util.template(iconTemplate, iconData);
 }
 
-// TODO(amwolff): make betterSeconds more informative name
-function betterSeconds(seconds) {
+function hrSeconds(seconds) {
     if (seconds > 60) {
         let minutes = Math.floor(seconds / 60);
         let remainingSeconds = seconds - 60 * minutes;
@@ -159,18 +158,18 @@ function markerizeVehicles(internalVehicles) {
         if (v.isStall()) {
             if (v.variance > 0) {
                 popupData.state = 'Czas do odjazdu';
-                popupData.variance = betterSeconds(v.variance);
+                popupData.variance = hrSeconds(v.variance);
             } else {
                 popupData.state = 'Opóźnienie odjazdu';
-                popupData.variance = betterSeconds(-1 * v.variance);
+                popupData.variance = hrSeconds(-1 * v.variance);
             }
         } else {
             if (v.variance > 0) {
                 popupData.state = 'Przed czasem';
-                popupData.variance = betterSeconds(v.variance);
+                popupData.variance = hrSeconds(v.variance);
             } else {
                 popupData.state = 'Opóźnienie';
-                popupData.variance = betterSeconds(-1 * v.variance);
+                popupData.variance = hrSeconds(-1 * v.variance);
             }
         }
 
@@ -223,7 +222,7 @@ function refresh() {
 }
 
 function entrypoint() {
-    let map = L.map('map', {attributionControl: false}).setView([53.773056, 20.476111], 14);
+    let map = L.map('map', {attributionControl: false, center: [53.773056, 20.476111], zoom: 14});
 
     // TODO(amwolff): can we afford adding the {r} (retina tiles) parameter to the tile layer URL?
     L.tileLayer('https://api.mapbox.com/styles/v1/amwolff/cjnynkofj1jxf2ro9v4123t0v/tiles/256/{z}/{x}/{y}?access_token={t}', {
@@ -280,4 +279,4 @@ function entrypoint() {
         });
 }
 
-entrypoint();
+window.onload = entrypoint;
