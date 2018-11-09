@@ -244,16 +244,15 @@ func main() {
 	routes := &municommodels.GetRouteAndVariantsResponse{}
 	for {
 		now := time.Now().In(tz)
+		now4AM := time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0, 0, tz)
 
-		if !coldStart {
-			d := time.Until(time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0, 0, tz))
+		if !coldStart && now.Before(now4AM) {
+			d := time.Until(now4AM)
 			log.Infof("Will now wait %v", d)
 			time.Sleep(d)
-		} else {
-			coldStart = false
 		}
 
-		ctx, canc := context.WithTimeout(context.Background(), time.Second)
+		ctx, canc := context.WithTimeout(context.Background(), time.Minute)
 		routes, err = client.CallGetRouteAndVariants(ctx, sessionCookies, municommodels.GetRouteAndVariants{})
 		if err != nil {
 			// canc()
@@ -263,7 +262,14 @@ func main() {
 		canc()
 
 		now = time.Now().In(tz)
+		now6AM := time.Date(now.Year(), now.Month(), now.Day(), 6, 30, 0, 0, tz)
+
 		calibrationTime := time.Date(now.Year(), now.Month(), (now.Day() + 1), 1, 59, 39, 0, tz)
+		if !coldStart && now.Before(now6AM) {
+			calibrationTime = now6AM
+		} else if coldStart {
+			coldStart = false
+		}
 
 		insertRoutesChunk(dbConn, log, routes, now)
 
