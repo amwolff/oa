@@ -3,7 +3,7 @@
 import httplib
 import urllib
 
-f = open("unoptimized/app.js", "r")
+f = open("raw/app.js", "r")
 
 params = urllib.urlencode([
     ('js_code', f.read()),
@@ -16,6 +16,6 @@ headers = {"Content-type": "application/x-www-form-urlencoded"}
 conn = httplib.HTTPSConnection('closure-compiler.appspot.com')
 conn.request('POST', '/compile', params, headers)
 response = conn.getresponse()
-c = open("optimized/app.js", "w")
+c = open("dist/app.js", "w")
 c.write(response.read())
 conn.close()
