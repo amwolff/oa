@@ -1,9 +1,7 @@
 package zdzit
 
 import (
-	"bytes"
 	"encoding/csv"
-	"fmt"
 	"github.com/gocarina/gocsv"
 	"github.com/jlaffaye/ftp"
 	"io"
@@ -13,17 +11,17 @@ import (
 )
 
 type BusStop struct {
-	Number		string
-	Name       	string
-	StreetName 	string
-	GetLatLong	struct {
+	Number      string
+	Name        string
+	StreetName  string
+	LatLongData struct {
 		Unsanitized 	string
 		Latitude 		float64
 		Longitude 		float64
 	}
 }
 
-func GetLatestFile(url string) (*ftp.Response, error) {
+func getLatestFile(url string) (*ftp.Response, error) {
 
 	conn, err := ftp.Connect(url)
 	if err != nil {
@@ -45,22 +43,14 @@ func GetLatestFile(url string) (*ftp.Response, error) {
 
 	sort.Strings(files)
 
-	data, err := conn.Retr(files[len(files)-1])
-	if err != nil {
-		return nil, err
-	}
-
-	buf := new(bytes.Buffer)
-	data.Read(buf.Bytes())
-
-	return data, nil
+	return conn.Retr(files[len(files)-1])
 }
 
 func ParseBusStop(url string) ([]BusStop, error) {
 
 	var busStops []BusStop
 
-	data, err := GetLatestFile(url)
+	data, err := getLatestFile(url)
 	if err != nil {
 		return nil, err
 	}
@@ -72,28 +62,32 @@ func ParseBusStop(url string) ([]BusStop, error) {
 	})
 
 	if err := gocsv.UnmarshalWithoutHeaders(data, &busStops); err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
-	for i, stop := range busStops {
-		splittedLatLong := strings.Split(stop.GetLatLong.Unsanitized, ",")
+	for i, busStop := range busStops {
+
+		splittedLatLong := strings.Split(busStop.LatLongData.Unsanitized, ",")
+		if len(splittedLatLong) != 2 {
+			busStops[i].LatLongData.Latitude	= 0
+			busStops[i].LatLongData.Longitude	= 0
+			continue
+		}
 
 		f1, err := strconv.ParseFloat(splittedLatLong[0], 64)
 		if err != nil {
 			f1 = 0
 		}
 
-		splittedLatLong = append(splittedLatLong, "")
-
 		f2, err := strconv.ParseFloat(splittedLatLong[1], 64)
 		if err != nil {
 			f2 = 0
 		}
 
-		busStops[i].GetLatLong.Latitude		= f1
-		busStops[i].GetLatLong.Longitude	= f2
+		busStops[i].LatLongData.Latitude	= f1
+		busStops[i].LatLongData.Longitude	= f2
 
 	}
 
-	return busStops[1:], nil 	// we need to ignore names of the columns
+	return busStops[1:], nil 	// we need to ignore columns description
 }

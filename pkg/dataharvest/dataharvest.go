@@ -129,7 +129,7 @@ func InsertCNRGetVehiclesResponsesIntoDb(dbSess dbr.SessionRunner,
 	return nil
 }
 
-func InsertGetBusStopsIntoDb(dbSess dbr.SessionRunner, fetchTime time.Time) error {
+func InsertBusStopsIntoDb(dbSess dbr.SessionRunner, stops []zdzit.BusStop, fetchTime time.Time) error {
 
 	q := dbSess.InsertInto("olsztyn_static.stops").Columns(
 		"ts",
@@ -141,20 +141,15 @@ func InsertGetBusStopsIntoDb(dbSess dbr.SessionRunner, fetchTime time.Time) erro
 		"longitude",
 	)
 
-	stops, err := zdzit.ParseBusStop("helios.zdzit.olsztyn.eu:21")
-	if err != nil {
-		return errors.Wrap(err, "cannot connect to ftp server")
-	}
-
-	for _, record := range stops {
+	for _, s := range stops {
 			q.Values(
 				fetchTime,
 
-				record.Number,
-				record.Name,
-				record.StreetName,
-				record.GetLatLong.Latitude,
-				record.GetLatLong.Longitude,
+				s.Number,
+				s.Name,
+				s.StreetName,
+				s.LatLongData.Latitude,
+				s.LatLongData.Longitude,
 			)
 	}
 
