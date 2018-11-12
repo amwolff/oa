@@ -28,3 +28,5 @@ CREATE TABLE olsztyn_static.stops (
   longitude    NUMERIC(16,14)
 );
 
+CREATE INDEX ON olsztyn_static.routes (ts DESC);
+

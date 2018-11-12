@@ -10,7 +10,7 @@ import (
 )
 
 func InsertGetRouteAndVariantsResponseIntoDb(dbSess dbr.SessionRunner,
-	routes municommodels.GetRouteAndVariantsResponse, fetchTime time.Time) error {
+	routes *municommodels.GetRouteAndVariantsResponse, fetchTime time.Time) error {
 
 	q := dbSess.InsertInto("olsztyn_static.routes").Columns(
 		"ts",
@@ -44,7 +44,7 @@ func InsertGetRouteAndVariantsResponseIntoDb(dbSess dbr.SessionRunner,
 }
 
 func InsertCNRGetVehiclesResponsesIntoDb(dbSess dbr.SessionRunner,
-	vehicles []municommodels.CNRGetVehiclesResponse, fetchTime time.Time) error {
+	vehicles []*municommodels.CNRGetVehiclesResponse, fetchTime time.Time) error {
 
 	q := dbSess.InsertInto("olsztyn_live.vehicles").Columns(
 		"ts",
@@ -78,12 +78,10 @@ func InsertCNRGetVehiclesResponsesIntoDb(dbSess dbr.SessionRunner,
 		"opis_tabl",
 		"nast_opis_tabl",
 		"wektor",
-
-		"raw",
 	)
 
 	for _, v := range vehicles {
-		for i, s := range v.CNRGetVehiclesResult.Sanitized {
+		for _, s := range v.CNRGetVehiclesResult.Sanitized {
 			q.Values(
 				fetchTime,
 
@@ -116,8 +114,6 @@ func InsertCNRGetVehiclesResponsesIntoDb(dbSess dbr.SessionRunner,
 				s.OpisTabl,
 				s.NastOpisTabl,
 				s.Wektor,
-
-				v.CNRGetVehiclesResult.Unsanitized[i],
 			)
 		}
 	}

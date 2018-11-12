@@ -91,7 +91,7 @@ func NewWebServiceClient(logger logrus.FieldLogger, name, UA, URL string) *WebSe
 	return c
 }
 
-func (c WebServiceClient) UnmarshalSOAP(data []byte, v interface{}) error {
+func (WebServiceClient) UnmarshalSOAP(data []byte, v interface{}) error {
 	b := bytes.NewReader(data)
 	d := xml.NewDecoder(b)
 
@@ -177,7 +177,8 @@ func (c WebServiceClient) call(ctx context.Context, cookies []http.Cookie, metho
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("server returned %d (%s) != 200", resp.StatusCode, resp.Status)
+		return nil, errors.Errorf("server returned %d (%s) != %d", resp.StatusCode, resp.Status,
+			http.StatusOK)
 	}
 
 	return respBody, nil
@@ -213,7 +214,9 @@ func (c WebServiceClient) CallCNRGetVehicles(ctx context.Context, cookies []http
 	}
 
 	if err := ret.Sanitize(); err != nil {
-		return nil, err
+		// Call's response is still going to be returned in order to rescue
+		// available data.
+		return ret, err
 	}
 
 	return ret, nil
