@@ -142,15 +142,15 @@ func InsertBusStopsIntoDb(dbSess dbr.SessionRunner, stops []zdzit.BusStop, fetch
 	)
 
 	for _, s := range stops {
-			q.Values(
-				fetchTime,
+		q.Values(
+			fetchTime,
 
-				s.Number,
-				s.Name,
-				s.StreetName,
-				s.LatLongData.Latitude,
-				s.LatLongData.Longitude,
-			)
+			s.Number,
+			s.Name,
+			s.StreetName,
+			s.LatLng.Latitude,
+			s.LatLng.Longitude,
+		)
 	}
 
 	if _, err := q.Exec(); err != nil {

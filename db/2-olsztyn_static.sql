@@ -25,6 +25,6 @@ CREATE TABLE olsztyn_static.stops (
   name         VARCHAR,
   street_name  VARCHAR,
   latitude     NUMERIC(16,14),
-  longitude    Numeric(16,14)
+  longitude    NUMERIC(16,14)
 );
 

@@ -11,13 +11,13 @@ import (
 )
 
 type BusStop struct {
-	Number      string
-	Name        string
-	StreetName  string
-	LatLongData struct {
-		Unsanitized 	string
-		Latitude 		float64
-		Longitude 		float64
+	Number     string
+	Name       string
+	StreetName string
+	LatLng     struct {
+		Unsanitized string
+		Latitude    float64
+		Longitude   float64
 	}
 }
 
@@ -65,12 +65,11 @@ func ParseBusStop(url string) ([]BusStop, error) {
 		return nil, err
 	}
 
-	for i, busStop := range busStops {
-
-		splittedLatLong := strings.Split(busStop.LatLongData.Unsanitized, ",")
+	for i, busStop := range busStops[1:] {
+		splittedLatLong := strings.Split(busStop.LatLng.Unsanitized, ",")
 		if len(splittedLatLong) != 2 {
-			busStops[i].LatLongData.Latitude	= 0
-			busStops[i].LatLongData.Longitude	= 0
+			busStops[i].LatLng.Latitude = 0
+			busStops[i].LatLng.Longitude = 0
 			continue
 		}
 
@@ -84,10 +83,10 @@ func ParseBusStop(url string) ([]BusStop, error) {
 			f2 = 0
 		}
 
-		busStops[i].LatLongData.Latitude	= f1
-		busStops[i].LatLongData.Longitude	= f2
+		busStops[i].LatLng.Latitude = f1
+		busStops[i].LatLng.Longitude = f2
 
 	}
 
-	return busStops[1:], nil 	// we need to ignore columns description
+	return busStops[1:], nil // we need to ignore columns description
 }
