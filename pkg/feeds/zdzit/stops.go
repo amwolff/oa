@@ -34,7 +34,10 @@ func getLatestFile(url string) (*ftp.Response, error) {
 	}
 
 	var files []string
-	entries, _ := conn.List("")
+	entries, err := conn.List("")
+	if err != nil {
+		return nil, err
+	}
 
 	for _, entry := range entries {
 		date := entry.Name
