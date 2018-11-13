@@ -3,6 +3,7 @@ package dataharvest
 import (
 	"time"
 
+	"github.com/amwolff/oa/pkg/feeds/zdzit"
 	"github.com/amwolff/oa/pkg/municommodels"
 	"github.com/gocraft/dbr"
 	"github.com/pkg/errors"
@@ -119,6 +120,37 @@ func InsertCNRGetVehiclesResponsesIntoDb(dbSess dbr.SessionRunner,
 
 	if _, err := q.Exec(); err != nil {
 		return errors.Wrap(err, "cannot insert vehicles dump into the database")
+	}
+
+	return nil
+}
+
+func InsertBusStopsIntoDb(dbSess dbr.SessionRunner, stops []zdzit.BusStop, fetchTime time.Time) error {
+
+	q := dbSess.InsertInto("olsztyn_static.stops").Columns(
+		"ts",
+
+		"number",
+		"name",
+		"street_name",
+		"latitude",
+		"longitude",
+	)
+
+	for _, s := range stops {
+		q.Values(
+			fetchTime,
+
+			s.Number,
+			s.Name,
+			s.StreetName,
+			s.LatLng.Latitude,
+			s.LatLng.Longitude,
+		)
+	}
+
+	if _, err := q.Exec(); err != nil {
+		return errors.Wrap(err, "cannot insert bus stops dump into the database")
 	}
 
 	return nil

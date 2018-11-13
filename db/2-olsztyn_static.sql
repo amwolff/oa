@@ -17,4 +17,16 @@ CREATE TABLE olsztyn_static.routes (
   direction    VARCHAR(1)
 );
 
+CREATE TABLE olsztyn_static.stops (
+  id           SERIAL                   NOT NULL PRIMARY KEY,
+  ts           TIMESTAMP WITH TIME ZONE NOT NULL,
+
+  number       VARCHAR(7),
+  name         VARCHAR,
+  street_name  VARCHAR,
+  latitude     NUMERIC(16,14),
+  longitude    NUMERIC(16,14)
+);
+
 CREATE INDEX ON olsztyn_static.routes (ts DESC);
+
