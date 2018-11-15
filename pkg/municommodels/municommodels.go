@@ -48,8 +48,8 @@ type GetRouteAndVariantsResponse struct {
 
 	GetRouteAndVariantsResult struct {
 		L []struct {
-			// Fields names are reverse engineered from the biggest (ugliest?)
-			// JS on the site.
+			// Fields names are decoded from the JavaScript file from the site
+			// where the data is from.
 			Number       string `xml:"l,attr,omitempty"`
 			Description  string `xml:"o,attr,omitempty"`
 			Description2 string `xml:"o2,attr,omitempty"`
@@ -144,20 +144,29 @@ func (c WebServiceClient) call(ctx context.Context, cookies []http.Cookie, metho
 	// Date: Fri, 17 Aug 2018 20:38:36 GMT
 	// Content-Length: 507
 
-	// req.Header.Set("Accept", "*/*")
-	// req.Header.Set("Accept-Encoding", "gzip")
-	// req.Header.Set("Accept-Language", "pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7")
-	// req.Header.Set("Age", "0")
-	// req.Header.Set("Cache-Control", "no-cache")
-	// req.Header.Set("Connection", "keep-alive")
-	// req.Header.Set("Content-Length", "0")
-	req.Header.Set("Content-Type", "text/xml;charset=UTF-8")
-	// req.Header.Set("Host", "sip.zdzit.olsztyn.eu")
-	// req.Header.Set("Origin", "http://sip.zdzit.olsztyn.eu")
-	// req.Header.Set("Pragma", "no-cache")
-	// req.Header.Set("Referer", "http://sip.zdzit.olsztyn.eu/")
+	// Example request headers:
+	// POST /PublicService.asmx HTTP/1.1
+	// Host: sip.zdzit.olsztyn.eu
+	// Connection: keep-alive
+	// Content-Length: 388
+	// Pragma: no-cache
+	// Cache-Control: no-cache
+	// Origin: http://sip.zdzit.olsztyn.eu
+	// Age: 5836
+	// SOAPAction: http://PublicService/CNR_GetVehicles
+	// User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36
+	// Content-Type: text/xml;charset=UTF-8
+	// Accept: */*
+	// Referer: http://sip.zdzit.olsztyn.eu/
+	// Accept-Encoding: gzip, deflate
+	// Accept-Language: pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7
+	// Cookie: ASP.NET_SessionId=aof1cka2w451ee0bhjbhe5ub
+
+	req.Header.Set("Pragma", "no-cache")
+	req.Header.Set("Cache-Control", "no-cache")
 	req.Header.Set("SOAPAction", fmt.Sprintf("http://PublicService/%s", method))
 	req.Header.Set("User-Agent", c.ua)
+	req.Header.Set("Content-Type", "text/xml;charset=UTF-8")
 
 	for _, c := range cookies {
 		req.AddCookie(&c)

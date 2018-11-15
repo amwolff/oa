@@ -126,7 +126,6 @@ func InsertCNRGetVehiclesResponsesIntoDb(dbSess dbr.SessionRunner,
 }
 
 func InsertBusStopsIntoDb(dbSess dbr.SessionRunner, stops []zdzit.BusStop, fetchTime time.Time) error {
-
 	q := dbSess.InsertInto("olsztyn_static.stops").Columns(
 		"ts",
 
