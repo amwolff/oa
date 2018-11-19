@@ -194,9 +194,9 @@ function insertOnMap(rawVehicles) {
 
 // TODO(amwolff): swap elses with returns
 function fireNextRefresh(lastModifiedDate) {
-    let refreshAfter = 22000 - (Date.now() - lastModifiedDate);
+    let refreshAfter = 12000 - (Date.now() - lastModifiedDate);
     if (refreshAfter < 0) {
-        if (refreshAfter > -21000) {
+        if (refreshAfter > -11000) {
             setTimeout(refresh, 1000);
         } else {
             console.log(

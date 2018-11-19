@@ -48,5 +48,5 @@ buildContainer dataharvester
 buildContainer api
 
 cp ${REPO}/pkg/frontend/icos/* ${DEPLOYMENT}/cache/dirserver/
-cp ${REPO}/pkg/frontend/optimized/* ${DEPLOYMENT}/cache/dirserver/
+cp ${REPO}/pkg/frontend/dist/* ${DEPLOYMENT}/cache/dirserver/
 buildContainer dirserver

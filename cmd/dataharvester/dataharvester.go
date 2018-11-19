@@ -281,7 +281,7 @@ func main() {
 		log.Info("Calibration completed")
 
 		for now.Before(calibrationTime) {
-			durationPool := 21 * time.Second // TODO(amwolff): we can probably query more often now
+			durationPool := 11 * time.Second
 			var vehiclesChunk []*municommodels.CNRGetVehiclesResponse
 			for _, r := range routes.GetRouteAndVariantsResult.L {
 				now = time.Now().In(tz)
