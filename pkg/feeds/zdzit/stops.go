@@ -2,12 +2,13 @@ package zdzit
 
 import (
 	"encoding/csv"
-	"github.com/gocarina/gocsv"
-	"github.com/jlaffaye/ftp"
 	"io"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/gocarina/gocsv"
+	"github.com/jlaffaye/ftp"
 )
 
 type BusStop struct {
@@ -33,12 +34,12 @@ func getLatestFile(url string) (*ftp.Response, error) {
 		return nil, err
 	}
 
-	var files []string
 	entries, err := conn.List("")
 	if err != nil {
 		return nil, err
 	}
 
+	var files []string
 	for _, entry := range entries {
 		date := entry.Name
 		files = append(files, date)

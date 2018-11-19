@@ -20,8 +20,8 @@ type CNRGetVehicles struct {
 
 	XMLName xml.Name `xml:"http://PublicService/ CNR_GetVehicles"`
 
-	// Fields names are reverse engineered (again) from the biggest (ugliest?)
-	// JS on the site.
+	// Fields names are decoded from the JavaScript file from the site where the
+	// data is from.
 	//
 	// It goes like this:
 	// s:  some kind of token
@@ -49,8 +49,8 @@ type CNRGetVehiclesResponse struct {
 }
 
 type SanitizedCNRGetVehiclesResult struct {
-	// Fields names are reverse engineered (again) from the biggest (ugliest?)
-	// JS on the site.
+	// Fields names are decoded from the JavaScript file from the site where the
+	// data is from.
 	NrRadia          int
 	Nb               int
 	NumerLini        string

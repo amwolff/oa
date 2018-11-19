@@ -42,6 +42,14 @@
   revision = "084a9de9eb0361fbd5ded14b55c84e5493a5d7f6"
 
 [[projects]]
+  branch = "master"
+  digest = "1:d64295b5ec8d005079c11a1b647a1792ca8260eafbbbb10ef8092e5ca85038be"
+  name = "github.com/gocarina/gocsv"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cde31a6ec2a87636e8a5f13d18468e9dd683149e"
+
+[[projects]]
   digest = "1:083bd57e1a2b764eb19b70e7816bc1385b30d73191540e2756dceb445eff2eb2"
   name = "github.com/gocraft/dbr"
   packages = [
@@ -70,6 +78,14 @@
   ]
   pruneopts = "UT"
   revision = "ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+
+[[projects]]
+  branch = "master"
+  digest = "1:dbfa8b5fa854139c596df837803250765cbe25369a08882fcbf45779d4cae66b"
+  name = "github.com/jlaffaye/ftp"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "47f21d10f0ee0d0921769ca3618072e53c12c5a3"
 
 [[projects]]
   digest = "1:8ef506fc2bb9ced9b151dafa592d4046063d744c646c1bbe801982ce87e4bc24"
@@ -215,8 +231,10 @@
     "github.com/davecgh/go-spew/spew",
     "github.com/fsnotify/fsnotify",
     "github.com/getsentry/raven-go",
+    "github.com/gocarina/gocsv",
     "github.com/gocraft/dbr",
     "github.com/gocraft/dbr/dialect",
+    "github.com/jlaffaye/ftp",
     "github.com/lib/pq",
     "github.com/pkg/errors",
     "github.com/sirupsen/logrus",
