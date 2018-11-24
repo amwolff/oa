@@ -294,24 +294,30 @@ function setLocationTracking(map) {
     map.locate({watch: true, enableHighAccuracy: true});
 }
 
+// TODO(amwolff): allow only unique commits
 class UserHistory {
     constructor() {
+        this._params = new URL(window.location.href).searchParams;
+
         this._current_state = [];
 
         const state = history.state;
         if (state !== null) {
+            this._params.delete('r');
             this._current_state = state;
             return;
         }
 
-        const params = new URL(window.location.href).searchParams;
-        if (params.has('r')) {
-            params.get('r').split(',').forEach(p => {
+        if (this._params.has('r')) {
+            this._params.get('r').split(',').forEach(p => {
                 if (this._getAvailableRoutesArray().includes(p)) {
                     this._current_state.push(p);
                 }
             });
+            this._params.delete('r');
         }
+
+        this._commitReplace();
     };
 
     _getAvailableRoutesArray() {
@@ -322,8 +328,22 @@ class UserHistory {
         return availableRoutesArray;
     };
 
+    _getParamString() {
+        const path = L.Util.getParamString({r: this._current_state.sort()});
+
+        const params = this._params.toString();
+        if (params.length === 0) {
+            return path;
+        }
+        return path.concat('&').concat(params);
+    };
+
+    _commitReplace() {
+        history.replaceState(this._current_state, '', this._getParamString());
+    };
+
     _commit() {
-        history.pushState(this._current_state, '', L.Util.getParamString({r: this._current_state.sort()}));
+        history.pushState(this._current_state, '', this._getParamString());
     };
 
     _remove(element) {
@@ -366,19 +386,12 @@ class UserHistory {
     };
 
     onPop(map, event) {
-        // Fast path.
-        if (event.state === null || event.state.length === 0) {
-            this._current_state = [];
-            vehiclesLayerGroups['*'].removeFrom(map);
-            return;
-        }
-
         this._current_state = event.state;
 
         // Silence add/remove events so that they won't fire the propagation
         // chain where the history may get rewritten ("hazardous" situation).
-        map.off('overlayremove', onOverlayRemove, this);
         map.off('overlayradd', onOverlayRemove, this);
+        map.off('overlayremove', onOverlayRemove, this);
 
         this._getAvailableRoutesArray().forEach(r => {
             if (this._current_state.includes(r)) {
@@ -391,8 +404,10 @@ class UserHistory {
             vehiclesLayerGroups[r].addTo(map);
         });
 
-        map.on('overlayremove', onOverlayRemove, this);
         map.on('overlayradd', onOverlayRemove, this);
+        map.on('overlayremove', onOverlayRemove, this);
+
+        // TODO(amwolff): the dummy layer ('*') should also get cleaned up
     };
 }
 
@@ -474,7 +489,7 @@ function init() {
 
             window.onpopstate = L.bind(userHistory.onPop, userHistory, map);
 
-            L.control.layers(null, vehiclesLayerGroups).addTo(map).expand();
+            L.control.layers(null, vehiclesLayerGroups).addTo(map);
 
             refresh();
         });
