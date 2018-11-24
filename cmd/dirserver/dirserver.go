@@ -71,12 +71,40 @@ var (
 	BuildTimeIsDev     string
 )
 
+var resources = map[string]struct{}{
+	"/android-chrome-192x192.png": {},
+	"/android-chrome-512x512.png": {},
+	"/apple-touch-icon.png":       {},
+	"/browserconfig.xml":          {},
+	"/favicon.ico":                {},
+	"/favicon-16x16.png":          {},
+	"/favicon-32x32.png":          {},
+	"/mstile-150x150.png":         {},
+	"/safari-pinned-tab.svg":      {},
+	"/site.webmanifest":           {},
+	"/app.css":                    {},
+	"/app.js":                     {},
+	"/":                           {},
+}
+
+func validateRequest(r *http.Request) bool {
+	if _, ok := resources[r.URL.EscapedPath()]; !ok {
+		return false
+	}
+	return true
+}
+
 func mainHandler(serveDir string, log logrus.FieldLogger) http.HandlerFunc {
 	fs := http.FileServer(http.Dir(serveDir))
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
+		log.Infof("Requested %s from %s [%s]", r.RequestURI, r.RemoteAddr, r.UserAgent())
+		if !validateRequest(r) {
+			log.Warn("Redirecting invalid request")
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
 		w.Header().Set("Cache-Control", "max-age=14400")
 		fs.ServeHTTP(w, r)
-		log.Infof("Served for %s", r.UserAgent())
 	})
 }
 
