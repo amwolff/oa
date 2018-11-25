@@ -97,7 +97,7 @@ func validateRequest(r *http.Request) bool {
 func mainHandler(serveDir string, log logrus.FieldLogger) http.HandlerFunc {
 	fs := http.FileServer(http.Dir(serveDir))
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
-		log.Infof("Requested %s by %s", r.RequestURI, r.UserAgent())
+		log.Infof("Requested %s by %s", r.URL.EscapedPath(), r.UserAgent())
 		if !validateRequest(r) {
 			log.Warn("Redirecting invalid request")
 			http.Redirect(w, r, "/", http.StatusSeeOther)

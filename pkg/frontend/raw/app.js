@@ -239,9 +239,9 @@ function insertOnMap(rawVehicles) {
 
 // TODO(amwolff): swap elses with returns
 function planNextRefresh(lastModifiedDate) {
-    const refreshAfter = 12000 - (Date.now() - lastModifiedDate);
+    const refreshAfter = 7000 - (Date.now() - lastModifiedDate);
     if (refreshAfter < 0) {
-        if (refreshAfter > -11000) {
+        if (refreshAfter > -6000) {
             setTimeout(refresh, 1000);
         } else {
             console.log(
@@ -273,7 +273,7 @@ function setLocationTracking(map) {
     let userLocation;
 
     const onLocationFound = function (e) {
-        let r = e.accuracy / 2;
+        const r = e.accuracy / 2;
         if (map.hasLayer(userLocation)) {
             userLocation.setLatLng(e.latlng).setRadius(r);
             return;
@@ -294,6 +294,14 @@ function setLocationTracking(map) {
     map.locate({watch: true, enableHighAccuracy: true});
 }
 
+function onOverlayAdd(e) {
+    this.append(e);
+}
+
+function onOverlayRemove(e) {
+    this.detach(e);
+}
+
 // TODO(amwolff): allow only unique commits
 class UserHistory {
     constructor() {
@@ -309,8 +317,9 @@ class UserHistory {
         }
 
         if (this._params.has('r')) {
+            const rts = this._getAvailableRoutesArray();
             this._params.get('r').split(',').forEach(p => {
-                if (this._getAvailableRoutesArray().includes(p)) {
+                if (rts.includes(p) && !this._current_state.includes(p)) {
                     this._current_state.push(p);
                 }
             });
@@ -354,10 +363,6 @@ class UserHistory {
     };
 
     append(group) {
-        if (this._current_state.includes(group.name)) {
-            return;
-        }
-
         if (group.name === '*') {
             this._current_state = this._getAvailableRoutesArray();
             this._commit();
@@ -390,7 +395,7 @@ class UserHistory {
 
         // Silence add/remove events so that they won't fire the propagation
         // chain where the history may get rewritten ("hazardous" situation).
-        map.off('overlayradd', onOverlayRemove, this);
+        map.off('overlayadd', onOverlayAdd, this);
         map.off('overlayremove', onOverlayRemove, this);
 
         this._getAvailableRoutesArray().forEach(r => {
@@ -404,19 +409,11 @@ class UserHistory {
             vehiclesLayerGroups[r].addTo(map);
         });
 
-        map.on('overlayradd', onOverlayRemove, this);
+        map.on('overlayadd', onOverlayAdd, this);
         map.on('overlayremove', onOverlayRemove, this);
 
         // TODO(amwolff): the dummy layer ('*') should also get cleaned up
     };
-}
-
-function onOverlayAdd(e) {
-    this.append(e);
-}
-
-function onOverlayRemove(e) {
-    this.detach(e);
 }
 
 function initializeOverlays(map, userHistory) {
