@@ -146,20 +146,21 @@ func insertRoutesChunk(dbC *dbr.Connection, log logrus.FieldLogger,
 		return
 	}
 	err := errors.New("Zero-length data chunk")
-	raven.CaptureErrorAndWait(err, errTag)
 	log.Error(err)
+	raven.CaptureErrorAndWait(err, errTag)
 }
 
 func insertVehiclesChunk(dbC *dbr.Connection, log logrus.FieldLogger,
 	chunk []*municommodels.CNRGetVehiclesResponse, t time.Time) {
 
 	log = log.WithField("func", "insertVehiclesChunk")
+	errTag := map[string]string{"func": "insertVehiclesChunk"}
 
 	dbS := dbC.NewSession(&dbr.NullEventReceiver{})
 	if len(chunk) > 0 {
 		if err := dataharvest.InsertCNRGetVehiclesResponsesIntoDb(dbS, chunk, t); err != nil {
-			raven.CaptureErrorAndWait(err, map[string]string{"func": "insertVehiclesChunk"})
 			log.WithError(err).Error("InsertCNRGetVehiclesResponsesIntoDb")
+			raven.CaptureErrorAndWait(err, errTag)
 			return
 		}
 
@@ -170,7 +171,10 @@ func insertVehiclesChunk(dbC *dbr.Connection, log logrus.FieldLogger,
 		log.WithField("ts", t).Infof("Inserted %d vehicles", cnt)
 		return
 	}
-	log.Warn("Skip inserting zero-length data chunk")
+
+	_msg := "Skip inserting zero-length data chunk"
+	log.Warn(_msg)
+	raven.CaptureMessageAndWait(_msg, errTag)
 }
 
 // func serviceShutdown(callback func()) {
@@ -276,12 +280,12 @@ func main() {
 		if ok, err := calibrate(client, log, sessionCookies, routes); !ok {
 			// However absurd this is - Sentry doesn't handle <nil> errors.
 			raven.CaptureMessageAndWait(fmt.Sprintf("calibration failed (%v)", err), nil)
-			log.WithError(err).Fatal("Calibration unsuccessful")
+			log.WithError(err).Error("Calibration unsuccessful")
 		}
 		log.Info("Calibration completed")
 
 		for now.Before(calibrationTime) {
-			durationPool := 11 * time.Second
+			durationPool := 6 * time.Second
 			var vehiclesChunk []*municommodels.CNRGetVehiclesResponse
 			for _, r := range routes.GetRouteAndVariantsResult.L {
 				now = time.Now().In(tz)
