@@ -88,48 +88,6 @@ func loadConfig(log logrus.FieldLogger) (cfg config) {
 	return
 }
 
-func calibrate(client *municommodels.WebServiceClient, log logrus.FieldLogger,
-	cookies []http.Cookie, available *municommodels.GetRouteAndVariantsResponse) (bool, error) {
-
-	for _, r := range available.GetRouteAndVariantsResult.L {
-		payload := municommodels.CNRGetVehicles{
-			R: r.Number,
-			D: r.Direction,
-		}
-		log.Infof("calibrate: trying %s (%s)", payload.R, payload.D)
-
-		durationPool := 30 * time.Second
-		var previous, actual float64
-		for durationPool > 0 {
-			if previous != 0 && previous != actual {
-				log.Debugf("calibrate: %f != %f", previous, actual)
-				return true, nil
-			}
-			previous = actual
-
-			now := time.Now()
-			ctx, canc := context.WithTimeout(context.Background(), durationPool)
-			v, err := client.CallCNRGetVehicles(ctx, cookies, payload)
-			if err != nil {
-				canc()
-				break
-			}
-			canc()
-
-			s := v.CNRGetVehiclesResult.Sanitized
-			if s == nil {
-				break
-			}
-
-			actual = s[0].Szerokosc
-
-			time.Sleep(time.Second)
-			durationPool -= time.Since(now)
-		}
-	}
-	return false, nil
-}
-
 func insertRoutesChunk(dbC *dbr.Connection, log logrus.FieldLogger,
 	chunk *municommodels.GetRouteAndVariantsResponse, t time.Time) {
 
@@ -248,10 +206,11 @@ func main() {
 	routes := &municommodels.GetRouteAndVariantsResponse{}
 	for {
 		now := time.Now().In(tz)
-		now4AM := time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0, 0, tz)
+		maintenanceStart := time.Date(now.Year(), now.Month(), now.Day(), 1, 59, 39, 0, tz)
+		maintenanceEnd := time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0, 0, tz)
 
-		if !coldStart && now.Before(now4AM) {
-			d := time.Until(now4AM)
+		if !coldStart && now.After(maintenanceStart) && now.Before(maintenanceEnd) {
+			d := time.Until(maintenanceEnd)
 			log.Infof("Will now wait %v", d)
 			time.Sleep(d)
 		}
@@ -266,22 +225,14 @@ func main() {
 		canc()
 
 		now = time.Now().In(tz)
-		now6AM := time.Date(now.Year(), now.Month(), now.Day(), 6, 30, 0, 0, tz)
 
-		calibrationTime := time.Date(now.Year(), now.Month(), (now.Day() + 1), 1, 59, 39, 0, tz)
-		if !coldStart && now.Before(now6AM) {
-			calibrationTime = now6AM
-		} else if coldStart {
+		calibrationTime := time.Date(now.Year(), now.Month(), now.Day(), (now.Hour() + 1), 59, 39, 0, tz)
+		if coldStart {
 			coldStart = false
 		}
 
 		insertRoutesChunk(dbConn, log, routes, now)
 
-		if ok, err := calibrate(client, log, sessionCookies, routes); !ok {
-			// However absurd this is - Sentry doesn't handle <nil> errors.
-			raven.CaptureMessageAndWait(fmt.Sprintf("calibration failed (%v)", err), nil)
-			log.WithError(err).Error("Calibration unsuccessful")
-		}
 		log.Info("Calibration completed")
 
 		for now.Before(calibrationTime) {
