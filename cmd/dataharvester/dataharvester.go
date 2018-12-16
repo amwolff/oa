@@ -206,8 +206,8 @@ func main() {
 	routes := &municommodels.GetRouteAndVariantsResponse{}
 	for {
 		now := time.Now().In(tz)
-		maintenanceStart := time.Date(now.Year(), now.Month(), now.Day(), 1, 59, 39, 0, tz)
-		maintenanceEnd := time.Date(now.Year(), now.Month(), now.Day(), 4, 0, 0, 0, tz)
+		maintenanceStart := time.Date(now.Year(), now.Month(), now.Day(), 1, 59, 54, 0, tz)
+		maintenanceEnd := time.Date(now.Year(), now.Month(), now.Day(), 3, 59, 54, 0, tz)
 
 		if !coldStart && now.After(maintenanceStart) && now.Before(maintenanceEnd) {
 			d := time.Until(maintenanceEnd)
@@ -226,7 +226,7 @@ func main() {
 
 		now = time.Now().In(tz)
 
-		calibrationTime := time.Date(now.Year(), now.Month(), now.Day(), (now.Hour() + 1), 59, 39, 0, tz)
+		calibrationTime := time.Date(now.Year(), now.Month(), now.Day(), (now.Hour() + 1), 59, 54, 0, tz)
 		if coldStart {
 			coldStart = false
 		}
