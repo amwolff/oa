@@ -4,9 +4,9 @@
 ## About
 Olsztyńskie Autobusy was a project that combined harvesting vehicles data from systems of Olsztyn public transportation agency, serving current data for web app users and retaining that data.
 
-<div style="text-align:center"><img src ="screenshot.png" /></div>
+[![Screenshot](screenshot.png "https://autobusy.olsztyn.pl")](https://autobusy.olsztyn.pl)
 
-Quite simply built (I believe exception might be that data pulling part), it is modular microservice architecture divided into front/back-end.
+Quite simply built (I believe exception might be that data pulling part), it's modular microservice architecture divided into front/back-end.
 Main part of this infrastructure is the data harvester service and a Postgres instance.
 
 ## Start an instance
@@ -62,7 +62,7 @@ The app should be now available at `http://localhost`.
 
 ### Notes
 Started instance is very similar to what I deployed in cloud for "production" use.
-Additionally I've used docker-compose along with Docker in swarm mode to encapsulate startup instructions and traefik for requests routing.
+Additionally, I've used docker-compose along with Docker in swarm mode to encapsulate startup instructions and traefik for requests routing.
 
 ### CI status
 [![Build Status](https://travis-ci.com/amwolff/oa.svg?token=8LTVaXtVR2rYts8pwRmn&branch=master)](https://travis-ci.com/amwolff/oa)
