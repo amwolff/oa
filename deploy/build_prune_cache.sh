@@ -8,3 +8,4 @@ rm -i ${CACHEDIR}/api/*
 rm -i ${CACHEDIR}/dataharvester/*
 rm -i ${CACHEDIR}/db/*
 rm -i ${CACHEDIR}/dirserver/*
+rm -i ${CACHEDIR}/pinger/*

@@ -5,7 +5,8 @@ GRANT USAGE ON SCHEMA olsztyn_live TO data_service;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA olsztyn_live TO data_service;
 ALTER DEFAULT PRIVILEGES IN SCHEMA olsztyn_live GRANT ALL ON TABLES TO data_service;
 
-CREATE TABLE olsztyn_live.vehicles (
+CREATE TABLE olsztyn_live.vehicles
+(
   id                  SERIAL                   NOT NULL PRIMARY KEY,
   ts                  TIMESTAMP WITH TIME ZONE NOT NULL,
 

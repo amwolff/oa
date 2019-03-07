@@ -1,0 +1,11 @@
+ClientName: dataharvester
+ClientURL: 'http://sip.zdzit.olsztyn.eu/PublicService.asmx'
+ClientCookie: <your-ClientCookie>
+DbHost: oa-postgres-ip-alias
+DbPort: 5432
+DbName: oadb
+DbUser: data_service
+DbPass: data_service
+LogLevel: info
+LogDir: /tmp
+ForceColors: true

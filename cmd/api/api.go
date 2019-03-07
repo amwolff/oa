@@ -108,7 +108,7 @@ func buildStaticQueries() (map[string]string, error) {
 			).
 			Distinct().
 			From("olsztyn_static.routes").
-			Where("ts = (SELECT ts FROM olsztyn_static.routes ORDER BY id DESC LIMIT 1)").
+			Where("ts = (SELECT ts FROM olsztyn_static.routes ORDER BY ts DESC LIMIT 1)").
 			OrderBy("number")
 
 		q, err := build(sel)
@@ -133,7 +133,7 @@ func buildStaticQueries() (map[string]string, error) {
 				"wektor",
 			).
 			From("olsztyn_live.vehicles").
-			Where("ts = (SELECT ts FROM olsztyn_live.vehicles ORDER BY id DESC LIMIT 1)").
+			Where("ts = (SELECT ts FROM olsztyn_live.vehicles ORDER BY ts DESC LIMIT 1)").
 			OrderBy("numer_lini")
 
 		q, err := build(sel)
@@ -153,11 +153,11 @@ type routesResponse struct {
 	Route     string    `json:"route" db:"number"`
 }
 
-func endpointRoutes(dbC *dbr.Connection, q string, log logrus.FieldLogger) http.HandlerFunc {
+func endpointRoutes(dbC *dbr.Connection, q, org string, log logrus.FieldLogger) http.HandlerFunc {
 	log = log.WithField("handler", "AvailableRoutes")
 
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "https://autobusy.olsztyn.pl")
+		w.Header().Set("Access-Control-Allow-Origin", org)
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		var resp []routesResponse
@@ -192,11 +192,11 @@ type vehiclesResponse struct {
 	Variance        int     `json:"variance"         db:"odchylenie"`
 }
 
-func endpointVehicles(dbC *dbr.Connection, q string, log logrus.FieldLogger) http.HandlerFunc {
+func endpointVehicles(dbC *dbr.Connection, q, org string, log logrus.FieldLogger) http.HandlerFunc {
 	log = log.WithField("handler", "VehiclesData")
 
 	return raven.RecoveryHandler(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "https://autobusy.olsztyn.pl")
+		w.Header().Set("Access-Control-Allow-Origin", org)
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		var resp []vehiclesResponse
@@ -256,7 +256,9 @@ func main() {
 	raven.SetDefaultLoggerName("API")
 	raven.SetEnvironment(cfg.SentryEnvironment)
 	raven.SetRelease(BuildTimeCommitMD5)
-	raven.SetDSN(cfg.SentryDSN)
+	if err := raven.SetDSN(cfg.SentryDSN); err != nil {
+		log.WithError(err).Fatal("raven.SetDSN")
+	}
 
 	dsn := common.GetDsn(cfg.DbUser, cfg.DbPass, cfg.DbHost, cfg.DbPort, cfg.DbName)
 	log.Debugf("DSN: %s", dsn)
@@ -275,8 +277,13 @@ func main() {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.Error(w, "Invalid Request", http.StatusBadRequest) })
 	mux.HandleFunc(cfg.HealthPath, func(w http.ResponseWriter, r *http.Request) { fmt.Fprint(w, "OK") })
 	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) { return })
-	mux.Handle("/Routes", gziphandler.GzipHandler(endpointRoutes(dbConn, queries["Routes"], log)))
-	mux.Handle("/Vehicles", gziphandler.GzipHandler(endpointVehicles(dbConn, queries["Vehicles"], log)))
+
+	org := "https://autobusy.olsztyn.pl"
+	if isDev {
+		org = "*"
+	}
+	mux.Handle("/Routes", gziphandler.GzipHandler(endpointRoutes(dbConn, queries["Routes"], org, log)))
+	mux.Handle("/Vehicles", gziphandler.GzipHandler(endpointVehicles(dbConn, queries["Vehicles"], org, log)))
 
 	srv := http.Server{
 		Addr:    cfg.Addr,

@@ -12,9 +12,11 @@
 *.out
 
 # TODO(amwolff): set up git-crypt
-/deploy/cache
-/deploy/traefik.toml
-/deploy/docker-compose.yml
+deploy/cache
+deploy/docker-compose.yml
+deploy/traefik.toml
 deploy/services/api/config.yml
 deploy/services/dataharvester/config.yml
 deploy/services/dirserver/config.yml
+
+*.csv.xz

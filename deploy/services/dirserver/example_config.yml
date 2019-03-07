@@ -1,0 +1,6 @@
+Addr: ':http'
+HealthPath: /healthz
+ServeFrom: /app/dirserver/
+LogLevel: info
+LogDir: /tmp
+ForceColors: true

@@ -1,0 +1,10 @@
+DbHost: oa-postgres-ip-alias
+DbPort: 5432
+DbName: oadb
+DbUser: data_service
+DbPass: data_service
+Addr: ':http'
+HealthPath: /healthz
+LogLevel: info
+LogDir: /tmp
+ForceColors: true
