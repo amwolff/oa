@@ -1,16 +1,15 @@
 # Olsztyńskie Autobusy
 <!-- Infrastructure to pull, retain and represent real-time data collected from Olsztyn public transportation vehicles -->
-
 ## About
-Olsztyńskie Autobusy was a project that combined harvesting vehicles data from systems of Olsztyn public transportation agency, serving current data for web app users and retaining that data.
+Olsztyńskie Autobusy combine harvesting vehicles data from systems of Olsztyn public transportation agency, serving current data for web app users and retaining that data.
 
 [![Screenshot](screenshot.png "https://autobusy.olsztyn.pl")](https://autobusy.olsztyn.pl)
 
-Quite simply built (I believe exception might be that data pulling part), it's modular microservice architecture divided into front/back-end.
+Quite simply built (I believe exception might be that data pulling part), it has modular microservice architecture divided into front/back-end.
 Main part of this infrastructure is the data harvester service and a Postgres instance.
 
-## Start an instance
-In order to start a dockerized instance locally you will need to obtain session cookie and build services from source.
+## Build & Run
+In order to start a dockerized instance locally, you will need to obtain session cookie and build services from source.
 This walk-through assumes you have Go & Docker installed and configured.
 
 Clone repository:
@@ -26,8 +25,9 @@ dep ensure
 ```
 
 Get session cookie:
-
-In browser navigate to `sip.zdzit.olsztyn.eu`, open up inspector (Google Chrome: Control+Shift+I) and copy value of ASP.NET_SessionId.
+1. In browser navigate to `sip.zdzit.olsztyn.eu`;
+2. Open up inspector (Google Chrome: Control+Shift+I) > Application > Storage > Cookies;
+3. Copy value of ASP.NET_SessionId cookie.
 
 Configure services:
 
@@ -38,7 +38,7 @@ Line 3: ClientCookie: <your-ClientCookie>
 # $GOPATH/src/github.com/amwolff/oa/deploy/services/pinger/Dockerfile
 Line 16: ENV CLIENT_COOKIE <your-ClientCookie>
 ```
-substitue `<your-ClientCookie>` for value of your session cookie.
+substitue `<your-ClientCookie>` for copied value of your session cookie.
 
 Build everything:
 ```
@@ -62,7 +62,7 @@ The app should be now available at `http://localhost`.
 
 ### Notes
 Started instance is very similar to what I deployed in cloud for "production" use.
-Additionally, I've used docker-compose along with Docker in swarm mode to encapsulate startup instructions and traefik for requests routing.
+Additionally, I've used docker-compose along with Docker in swarm mode (to encapsulate startup instructions) and traefik (for requests routing).
 
 ### CI status
 [![Build Status](https://travis-ci.com/amwolff/oa.svg?token=8LTVaXtVR2rYts8pwRmn&branch=master)](https://travis-ci.com/amwolff/oa)
