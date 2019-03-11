@@ -9,7 +9,7 @@ Quite simply built (I believe exception might be that data pulling part), it has
 Main part of this infrastructure is the data harvester service and a Postgres instance.
 
 ## Build & Run
-In order to start a dockerized instance locally, you will need to obtain session cookie and build services from source.
+In order to start a dockerized instance locally, you need to obtain session cookie and build services from source.
 This walk-through assumes you have Go & Docker installed and configured.
 
 Clone repository:
