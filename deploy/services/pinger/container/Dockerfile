@@ -1,5 +1,7 @@
 FROM debian:jessie
 
+ENV CLIENT_COOKIE <your-ClientCookie>
+
 WORKDIR /app
 
 COPY . /app/pinger
@@ -12,7 +14,5 @@ RUN apt-get update -y && \
     apt-get install -y curl
 
 RUN ["chmod", "+x", "/app/pinger/pinger.sh"]
-
-ENV CLIENT_COOKIE <your-ClientCookie>
 
 ENTRYPOINT ["/app/pinger/pinger.sh"]

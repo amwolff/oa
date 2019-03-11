@@ -5,7 +5,7 @@ Olsztyńskie Autobusy combine harvesting vehicles data from systems of Olsztyn p
 
 [![Screenshot](screenshot.png "https://autobusy.olsztyn.pl")](https://autobusy.olsztyn.pl)
 
-Quite simply built (I believe exception might be that data pulling part), it has modular microservice architecture divided into front/back-end.
+It has modular microservice architecture divided into front/back-end.
 Main part of this infrastructure is the data harvester service and a Postgres instance.
 
 ## Build & Run
@@ -36,7 +36,7 @@ In files
 # $GOPATH/src/github.com/amwolff/oa/deploy/services/dataharvester/example_config.yml
 Line 3: ClientCookie: <your-ClientCookie>
 # $GOPATH/src/github.com/amwolff/oa/deploy/services/pinger/Dockerfile
-Line 16: ENV CLIENT_COOKIE <your-ClientCookie>
+Line 3: ENV CLIENT_COOKIE <your-ClientCookie>
 ```
 substitue `<your-ClientCookie>` for copied value of your session cookie.
 
