@@ -206,11 +206,11 @@ func main() {
 	routes := &municommodels.GetRouteAndVariantsResponse{}
 	for {
 		now := time.Now().In(tz)
-		maintenanceStart := time.Date(now.Year(), now.Month(), now.Day(), 1, 59, 54, 0, tz)
-		maintenanceEnd := time.Date(now.Year(), now.Month(), now.Day(), 3, 59, 54, 0, tz)
+		mntcStart := time.Date(now.Year(), now.Month(), now.Day(), 1, 59, 54, 0, tz)
+		mntcEnd := time.Date(now.Year(), now.Month(), now.Day(), 3, 59, 54, 0, tz)
 
-		if !coldStart && now.After(maintenanceStart) && now.Before(maintenanceEnd) {
-			d := time.Until(maintenanceEnd)
+		if !coldStart && now.After(mntcStart) && now.Before(mntcEnd) {
+			d := time.Until(mntcEnd)
 			log.Infof("Will now wait %v", d)
 			time.Sleep(d)
 		}

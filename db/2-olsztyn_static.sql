@@ -5,7 +5,8 @@ GRANT USAGE ON SCHEMA olsztyn_static TO data_service;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA olsztyn_static TO data_service;
 ALTER DEFAULT PRIVILEGES IN SCHEMA olsztyn_static GRANT ALL ON TABLES TO data_service;
 
-CREATE TABLE olsztyn_static.routes (
+CREATE TABLE olsztyn_static.routes
+(
   id           SERIAL                   NOT NULL PRIMARY KEY,
   ts           TIMESTAMP WITH TIME ZONE NOT NULL,
 
@@ -19,7 +20,8 @@ CREATE TABLE olsztyn_static.routes (
 
 CREATE INDEX ON olsztyn_static.routes (ts DESC);
 
-CREATE TABLE olsztyn_static.stops (
+CREATE TABLE olsztyn_static.stops
+(
   id          SERIAL                   NOT NULL PRIMARY KEY,
   ts          TIMESTAMP WITH TIME ZONE NOT NULL,
 

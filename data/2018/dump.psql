@@ -1,0 +1,2 @@
+\COPY (SELECT * FROM olsztyn_live.vehicles WHERE ts <= (SELECT ts FROM olsztyn_live.vehicles WHERE ts < '2018-12-01' ORDER BY ts DESC LIMIT 1) ORDER BY ts ASC) TO PROGRAM 'xz > 11.csv.xz' DELIMITER ',' CSV HEADER
+\COPY (SELECT * FROM olsztyn_live.vehicles WHERE ts <= (SELECT ts FROM olsztyn_live.vehicles WHERE ts < '2019-01-01' ORDER BY ts DESC LIMIT 1) ORDER BY ts ASC) TO PROGRAM 'xz > 12.csv.xz' DELIMITER ',' CSV HEADER
