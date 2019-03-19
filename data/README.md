@@ -1,9 +1,7 @@
 # Collected data releases
-
-## Overview
 This directory contains time series data collected from public transportation vehicles of the city of Olsztyn (53.773056, 20.476111) - Poland.
 
-## Technical overview
+## Overview
 - Sharded per day only (except first two months).
 - Timestamps are in traditional POSTGRES "Zulu" format.
 - There's always a gap between 1AM and 3AM.
