@@ -6,7 +6,7 @@ Olsztyńskie Autobusy combine harvesting vehicles data from systems of Olsztyn p
 [![Screenshot](screenshot.png "https://autobusy.olsztyn.pl")](https://autobusy.olsztyn.pl)
 
 It has modular microservice architecture divided into front/back-end.
-Main part of this infrastructure is the data harvester service and a Postgres instance.
+Main part of this infrastructure is the _dataharvester_ service and a Postgres instance.
 
 ## Build & Run
 In order to start a dockerized instance locally, you need to obtain session cookie and build services from source.
@@ -64,5 +64,5 @@ The app should be now available at `http://localhost`.
 Started instance is very similar to what I deployed in cloud for "production" use.
 Additionally, I've used docker-compose along with Docker in swarm mode (to encapsulate startup instructions) and traefik (for requests routing).
 
-### CI status
+#### CI
 [![Build Status](https://travis-ci.com/amwolff/oa.svg?token=8LTVaXtVR2rYts8pwRmn&branch=master)](https://travis-ci.com/amwolff/oa)
