@@ -43,19 +43,19 @@ substitue `<your-ClientCookie>` for copied value of your session cookie.
 Build everything:
 ```
 cd $GOPATH/src/github.com/amwolff/oa/deploy
-./build_all.sh -d -v eb5ed67
+./build_all.sh -d -v 63d0d1c
 ```
 
 Start services:
 ```
 docker network create backend
 docker network create frontend
-docker run -d --name oa_db --network backend --network-alias oa-postgres-ip-alias --rm amwolff/oa:oadb_eb5ed67
-docker run -d --name oa_pinger --network backend --rm amwolff/oa:pinger_eb5ed67
-docker run -d --name oa_dataharvester --network backend --rm amwolff/oa:dataharvester_eb5ed67
-docker run -d --name oa_api --network backend -p 8080:80 --rm amwolff/oa:api_eb5ed67
+docker run -d --name oa_db --network backend --network-alias oa-postgres-ip-alias --rm amwolff/oa:oadb_63d0d1c
+docker run -d --name oa_pinger --network backend --rm amwolff/oa:pinger_63d0d1c
+docker run -d --name oa_dataharvester --network backend --rm amwolff/oa:dataharvester_63d0d1c
+docker run -d --name oa_api --network backend -p 8080:80 --rm amwolff/oa:api_63d0d1c
 docker network connect frontend oa_api
-docker run -d --name oa_dirserver --network frontend -p 80:80 --rm amwolff/oa:dirserver_eb5ed67
+docker run -d --name oa_dirserver --network frontend -p 80:80 --rm amwolff/oa:dirserver_63d0d1c
 ```
 
 The app should be now available at `http://localhost`.
