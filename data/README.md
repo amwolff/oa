@@ -125,5 +125,7 @@ It's public domain data. I believe everything falls under CC0.
 *Scratches*:
 
 ```
-docker run --rm -it -v $GOPATH/src/github.com/amwolff/oa/data/2019/9/:/oadata/ -w /oadata/ postgres psql -h 159.89.5.189 -p 5432 -d oadb -U data_service # inside tty: \i dump.sql
+docker run --rm -it -v $(pwd):/oadata/ -w /oadata/ postgres psql -h 159.89.5.189 -p 5432 -d oadb -U data_service
+# 1. inside tty: \i dump.sql
+# 2. Yes - the DB is behind a firewall.
 ```
